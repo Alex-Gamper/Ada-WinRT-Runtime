@@ -1,0 +1,35 @@
+V "GNAT Lib v8"
+A -nostdinc
+A -O0
+A -gnatA
+A --RTS=C:\Ada\Software\Winrt-Runtime\
+A -gnatp
+A -gnatg
+A -g
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_CALENDAR
+RV NO_DELAY
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U calendar%s		calendar.ads		1b9d3005 NE OL
+W ada%s			ada.ads			ada.ali
+W ada.calendar%s	a-calend.adb		a-calend.ali
+
+D ada.ads		20181024005148 76789da1 ada%s
+D a-calend.ads		20181025023242 372815c8 ada.calendar%s
+D a-unccon.ads		20181024005148 0e9b276f ada.unchecked_conversion%s
+D calendar.ads		20181024005148 2cb525cd calendar%s
+D system.ads		20181024005152 32a08138 system%s
+D s-exctab.ads		20181024005150 54135002 system.exception_table%s
+D s-stalib.ads		20181024005152 09bd3940 system.standard_library%s
+X 1 ada.ads
+16K9*Ada 20e8 4|16r6 18r26
+X 2 a-calend.ads
+36K13*Calendar 398e17 4|16w10 18r30
+X 4 calendar.ads
+18K9*Calendar=18:30
+

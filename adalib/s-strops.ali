@@ -1,0 +1,55 @@
+V "GNAT Lib v8"
+A -nostdinc
+A -O0
+A -gnatA
+A --RTS=C:\Ada\Software\Winrt-Runtime\
+A -gnatp
+A -gnatg
+A -g
+A -mtune=generic
+A -march=x86-64
+P SS ZX
+
+RN
+RV NO_SECONDARY_STACK
+RV NO_DYNAMIC_SIZED_OBJECTS
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+
+U system.string_ops%b	s-strops.adb		28d2cdb1 NE OL PK
+W system%s		system.ads		system.ali
+Z system.secondary_stack%s  s-secsta.adb	s-secsta.ali
+
+U system.string_ops%s	s-strops.ads		5bcd6ec3 NE OL PU PK
+W system%s		system.ads		system.ali
+
+D system.ads		20181024005152 32a08138 system%s
+D s-parame.ads		20181025023242 48ec542b system.parameters%s
+D s-secsta.ads		20181025023242 20bbe636 system.secondary_stack%s
+D s-stoele.ads		20181024005152 2dc34a04 system.storage_elements%s
+D s-strops.ads		20181024005152 696deffb system.string_ops%s
+D s-strops.adb		20181024005152 41bf224a system.string_ops%b
+X 1 system.ads
+37K9*System 200e11 5|41r9 56r5 6|38r14 109r5
+81V14*"="{boolean} 6|46r19 94r19
+X 5 s-strops.ads
+41K16*String_Ops 1|37k9 5|56l12 56e22 6|38b21 109l12 109t22
+44V13*Str_Concat{string} 44>25 44>28 6|44b13 60l8 60t18
+44a25 X{string} 6|44b25 46r10 51r37 52r25 52r36 55r16 55r28 56r16 56r26
+44a28 Y{string} 6|44b28 47r17 51r48 56r49
+47V13*Str_Concat_SC{string} 47>28 47>40 6|92b13 107l8 107t21
+47a28 X{string} 6|92b28 94r10 99r25 99r36 102r16 102r28
+47e40 Y{character} 6|92b40 95r23 103r27
+50V13*Str_Concat_CS{string} 50>28 50>43 6|79b13 86l8 86t21
+50e28 X{character} 6|79b28 83r16
+50a43 Y{string} 6|79b43 80r24 84r26
+53V13*Str_Concat_CC{string} 53>28 53>31 6|66b13 73l8 73t21
+53e28 X{character} 6|66b28 70r16
+53e31 Y{character} 6|66b31 71r16
+X 6 s-strops.adb
+51i13 L{natural} 52r46
+52a13 R{string} 55m13 56m13 56r38 57r20
+67a7 R{string} 70m7 71m7 72r14
+80a7 R{string} 83m7 84m7 84r15 85r14
+99a13 R{string} 102m13 103m13 103r16 104r20
+

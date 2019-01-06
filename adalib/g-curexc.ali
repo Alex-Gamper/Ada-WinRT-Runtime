@@ -1,0 +1,34 @@
+V "GNAT Lib v8"
+A -nostdinc
+A -O0
+A -gnatA
+A --RTS=C:\Ada\Software\Winrt-Runtime\
+A -gnatp
+A -gnatg
+A -g
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+
+U gnat.current_exception%s  g-curexc.ads	f2a511d2 NE OL PU PK
+W gnat%s		gnat.ads		gnat.ali
+
+D ada.ads		20181024005148 76789da1 ada%s
+D a-unccon.ads		20181024005148 0e9b276f ada.unchecked_conversion%s
+D gnat.ads		20181025023242 b5988c27 gnat%s
+D g-curexc.ads		20181024005148 473d9df5 gnat.current_exception%s
+D system.ads		20181024005152 32a08138 system%s
+D s-exctab.ads		20181024005150 54135002 system.exception_table%s
+D s-stalib.ads		20181024005152 09bd3940 system.standard_library%s
+X 3 gnat.ads
+34K9*GNAT 57e9 4|44r9 112r5
+X 4 g-curexc.ads
+44K14*Current_Exception 3|34k9 4|112l10 112e27
+53V13*Exception_Information{string} 108b30
+59V13*Exception_Message{string} 109b30
+65V13*Exception_Name{string} 110b30
+

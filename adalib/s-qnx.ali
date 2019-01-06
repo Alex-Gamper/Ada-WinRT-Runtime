@@ -1,0 +1,95 @@
+V "GNAT Lib v8"
+A -nostdinc
+A -O0
+A -gnatA
+A --RTS=C:\Ada\Software\Winrt-Runtime\
+A -gnatp
+A -gnatg
+A -g
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV NO_IMPLEMENTATION_ATTRIBUTES
+RV NO_IMPLEMENTATION_PRAGMAS
+
+U system.qnx%s		s-qnx.ads		7ceed18d NE OL PR PK
+W interfaces%s		interfac.ads		interfac.ali
+W interfaces.c%s	i-c.adb			i-c.ali
+W system%s		system.ads		system.ali
+
+D ada.ads		20181024005148 76789da1 ada%s
+D a-unccon.ads		20181024005148 0e9b276f ada.unchecked_conversion%s
+D interfac.ads		20181024005150 5ab55268 interfaces%s
+D i-c.ads		20181024005150 5421119b interfaces.c%s
+D system.ads		20181024005152 32a08138 system%s
+D s-exctab.ads		20181024005150 54135002 system.exception_table%s
+D s-parame.ads		20181025023242 48ec542b system.parameters%s
+D s-qnx.ads		20181024005144 1a6f412e system.qnx%s
+D s-stalib.ads		20181024005152 09bd3940 system.standard_library%s
+X 3 interfac.ads
+38K9*Interfaces 184e15 8|38r6 47r27 48r27 49r27 50r27
+X 4 i-c.ads
+18K20*C 230e17 8|38w17 47r38 48r38 49r38 50r38
+35I9*int<integer> 8|50r40
+37I9*long<integer> 8|47r40 48r40 49r40
+X 5 system.ads
+37K9*System 200e11 8|40r9 122r5
+X 8 s-qnx.ads
+40K16*QNX 5|37k9 8|122l12 122e15
+47I12*long{4|37I9} 54r17
+48I12*suseconds_t{4|37I9} 60r17
+49I12*time_t{4|37I9} 53r17 59r17
+50I12*clockid_t{4|35I9}
+52R9*timespec 55e14 56r26
+53i7*tv_sec{49I12}
+54i7*tv_nsec{47I12}
+58R9*timeval 61e14 62r26
+59i7*tv_sec{49I12}
+60i7*tv_usec{48I12}
+68N4*EAGAIN
+69N4*EINTR
+70N4*EINVAL
+71N4*ENOMEM
+72N4*EPERM
+73N4*ETIMEDOUT
+79N4*SIGHUP
+80N4*SIGINT
+81N4*SIGQUIT
+82N4*SIGILL
+83N4*SIGTRAP
+84N4*SIGIOT
+85N4*SIGABRT
+86N4*SIGEMT
+87N4*SIGDEADLK
+88N4*SIGFPE
+89N4*SIGKILL
+90N4*SIGSEGV
+91N4*SIGPIPE
+92N4*SIGALRM
+93N4*SIGTERM
+94N4*SIGUSR1
+95N4*SIGUSR2
+96N4*SIGCHLD
+97N4*SIGCLD
+98N4*SIGPWR
+99N4*SIGWINCH
+100N4*SIGURG
+101N4*SIGPOLL
+102N4*SIGIO
+103N4*SIGSTOP
+104N4*SIGTSTP
+105N4*SIGCONT
+106N4*SIGTTIN
+107N4*SIGTTOU
+108N4*SIGVTALRM
+109N4*SIGPROF
+110N4*SIGXCPU
+111N4*SIGXFSZ
+115N4*sa_handler_pos
+116N4*sa_mask_pos 117r39
+117N4*sa_flags_pos
+119N4*SA_SIGINFO
+120N4*SA_ONSTACK
+

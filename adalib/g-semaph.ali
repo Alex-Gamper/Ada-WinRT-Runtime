@@ -1,0 +1,101 @@
+V "GNAT Lib v8"
+A -nostdinc
+A -O0
+A -gnatA
+A --RTS=C:\Ada\Software\Winrt-Runtime\
+A -gnatp
+A -gnatg
+A -g
+A -mtune=generic
+A -march=x86-64
+P ZX
+
+RN
+RV SIMPLE_BARRIERS
+RV NO_EXCEPTION_HANDLERS
+RV NO_EXCEPTION_PROPAGATION
+RV NO_EXCEPTIONS
+RV NO_PROTECTED_TYPES
+RV NO_STANDARD_STORAGE_POOLS
+RV STATIC_PRIORITIES
+RV NO_IMPLEMENTATION_PRAGMAS
+RV SPARK_05
+RV MAX_PROTECTED_ENTRIES=1
+
+U gnat.semaphores%b	g-semaph.adb		2d4c7e6e NE OL PK
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W gnat%s		gnat.ads		gnat.ali
+Z system%s		system.ads		system.ali
+Z system.soft_links%s	s-soflin.adb		s-soflin.ali
+Z system.tasking.protected_objects%s  s-taprob.adb  s-taprob.ali
+Z system.tasking.protected_objects.entries%s  s-tpoben.adb  s-tpoben.ali
+Z system.tasking.protected_objects.operations%s  s-tpobop.adb  s-tpobop.ali
+
+U gnat.semaphores%s	g-semaph.ads		1eae8b55 EE NE OL PK
+Z ada.exceptions%s	a-except.adb		a-except.ali
+Z ada.tags%s		a-tags.adb		a-tags.ali
+W gnat%s		gnat.ads		gnat.ali
+W system%s		system.ads		system.ali
+Z system.tasking.protected_objects%s  s-taprob.adb  s-taprob.ali
+Z system.tasking.protected_objects.entries%s  s-tpoben.adb  s-tpoben.ali
+
+D ada.ads		20181024005148 76789da1 ada%s
+D a-except.ads		20181024005146 291912d5 ada.exceptions%s
+D a-finali.ads		20181024005146 bf4f806b ada.finalization%s
+D a-stream.ads		20181024005146 119b8fb3 ada.streams%s
+D a-tags.ads		20181024005148 491b781d ada.tags%s
+D a-unccon.ads		20181024005148 0e9b276f ada.unchecked_conversion%s
+D gnat.ads		20181025023242 b5988c27 gnat%s
+D g-semaph.ads		20181024005144 9996864a gnat.semaphores%s
+D g-semaph.adb		20181024005144 b4daf824 gnat.semaphores%b
+D interfac.ads		20181024005150 5ab55268 interfaces%s
+D i-c.ads		20181024005150 5421119b interfaces.c%s
+D i-cstrin.ads		20181024005150 341d0ddf interfaces.c.strings%s
+D system.ads		20181024005152 32a08138 system%s
+D s-atacco.ads		20181024005150 4c36d12f system.address_to_access_conversions%s
+D s-exctab.ads		20181024005150 54135002 system.exception_table%s
+D s-finroo.ads		20181024005150 4ff27390 system.finalization_root%s
+D s-multip.ads		20181024005150 38ac9f73 system.multiprocessors%s
+D s-osinte.ads		20181024005144 2e5b26a9 system.os_interface%s
+D s-parame.ads		20181025023242 48ec542b system.parameters%s
+D s-secsta.ads		20181025023242 20bbe636 system.secondary_stack%s
+D s-soflin.ads		20181024005152 a7318a92 system.soft_links%s
+D s-stache.ads		20181024005152 a37c21ec system.stack_checking%s
+D s-stausa.ads		20181024005152 017a0a05 system.stack_usage%s
+D s-stalib.ads		20181024005152 09bd3940 system.standard_library%s
+D s-stoele.ads		20181024005152 2dc34a04 system.storage_elements%s
+D s-tasinf.ads		20181024005144 601f6b72 system.task_info%s
+D s-taspri.ads		20181024005144 6c1d93d4 system.task_primitives%s
+D s-taskin.ads		20181024005144 1d8c1ccb system.tasking%s
+D s-taprob.ads		20181024005144 acd6094d system.tasking.protected_objects%s
+D s-tpoben.ads		20181024005146 60ad3dae system.tasking.protected_objects.entries%s
+D s-tpobop.ads		20181024005146 5f548bb3 system.tasking.protected_objects.operations%s
+D s-traent.ads		20181024005152 005bf670 system.traceback_entries%s
+D s-unstyp.ads		20181024005152 34867c83 system.unsigned_types%s
+D s-win32.ads		20181024005152 b7f96285 system.win32%s
+X 7 gnat.ads
+34K9*GNAT 57e9 8|38r9 97r5 9|32r14 84r5
+X 8 g-semaph.ads
+38K14*Semaphores 7|34k9 8|97l10 97e20 9|32b19 84l10 84t20
+40i4*Default_Ceiling{13|101I12}
+47W19*Counting_Semaphore 48d8 52d7 67E7 68l8 68e26 9|38b19 57l8 57t26
+48i8 Initial_Value{natural} 67r26
+52i7 Ceiling{13|101I12} 56r24
+58Y13 Seize 9|44b13 47l11 47t16
+63U17 Release 9|53b17 56l11 56t18
+67i7 Count{natural} 9|44r24 46r10 46r19 55r10 55r19
+74W19*Binary_Semaphore 75d7 80d7 94E7 95l8 95e24 9|63b19 82l8 82t24
+75b7 Initially_Available{boolean} 94r30
+80i7 Ceiling{13|101I12} 84r24
+86Y13 Seize 9|69b13 72l11 72t16
+90U17 Release 9|78b17 81l11 81t18
+94b7 Available{boolean} 9|69r24 71r10 80r10
+X 13 system.ads
+37K9*System 8|36w6 40r31 40r50 52r17 80r17 13|200e11
+100I12*Any_Priority{integer}
+101I12*Priority{100I12} 8|40r38 52r24 80r24
+104i4*Default_Priority{101I12} 8|40r57
+X 23 s-stausa.ads
+203U14*Initialize 204i<c,__gnat_stack_usage_initialize>22
+268U14*Output_Results 272i<c,__gnat_stack_usage_output_results>22
+

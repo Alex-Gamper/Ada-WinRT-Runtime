@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<gprconfig>
+  <configuration>
+   <config>
+
+   package Compiler is
+   end Compiler;
+
+   package Linker is
+   end Linker;
+
+   package Binder is
+   end Binder;
+
+   </config>
+  </configuration>
+</gprconfig>

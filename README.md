@@ -9,7 +9,7 @@ be removed, so please check back on the status periodically, thanks)
 
 ### Project Status
 
-Work in progress (Alpha release)
+tba (work in progress)
 
 ### Build instructions
 

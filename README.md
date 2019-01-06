@@ -1,8 +1,15 @@
-## Ada-WinrRt-Runtime
+## Ada-WinRt-Runtime
 
 This project provides a Ada Runtime that can be used with the WinRT bindings and the resulting application
 will be deployable on Windows Store. Note the current FSF/GNAT runtime makes use of Windows Api's that are
 not compatible with deployment to Windows Store.
+
+Note : this is a work in progress (a formal announcement will be made once complete, and this message will
+be removed, so please check back on the status periodically, thanks)
+
+### Project Status
+
+Work in progress (Alpha release)
 
 ### Build instructions
 

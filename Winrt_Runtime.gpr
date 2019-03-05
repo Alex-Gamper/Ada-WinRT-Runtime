@@ -1,44 +1,12 @@
-project Winrt_Runtime is
+aggregate project Winrt_Runtime is
 
-   for Languages use ("Ada", "C");
-   for Library_Auto_Init use "False";
-   for Library_Name use "gnat";
-   for Library_Kind use "static";
-   for Library_Dir use "adalib";
-   for Object_Dir use "build";
-   for Source_Dirs use ("adainclude", "cpp");  
-   for Target use "x86_64-w64-mingw32 ";
+   Base_Source_Dir       := Project'Project_Dir;
+   Base_Installation_Dir := "lib\gcc\x86_64-w64-mingw32\8.2.1/";
+   Default_Prefix        := Base_Installation_Dir & "rts-Winrt";
+   Install_Dir           := external ("PREFIX", Default_Prefix);
 
-   type Build_Type is ("Production", "Debug");
-   Build : Build_Type := external ("BUILD", "Production");
-
-   package Builder is
-      for Switches ("Ada") use ("--RTS=" & Project'Project_dir);
-   end Builder;
-
-   package Compiler is
-
-      CFLAGS := ("-g");
-
-      case Build is
-        when "Production" =>
-           CFLAGS := CFLAGS & ("-O0");
-        when "Debug" =>
-           CFLAGS := CFLAGS & ("-O0");
-      end case;
-
-      ALL_CFLAGS := ("-fexceptions") & CFLAGS;
-      for Switches ("C") use ALL_CFLAGS;
-
-      ALL_ADAFLAGS := ("-gnatpg", "-nostdinc") & CFLAGS;
-      for Switches ("Ada") use ALL_ADAFLAGS;
-
-   end Compiler;
-
-   package Binder is
-   end Binder;
-
-   package Linker is
-   end Linker;
+   for external ("INSTALL_PREFIX") use Install_Dir;
+   for Project_Path use (Base_Source_Dir);
+   for Project_Files use ("Winrt_Library.gpr", "WinRt_Install.gpr");
 
 end Winrt_Runtime;

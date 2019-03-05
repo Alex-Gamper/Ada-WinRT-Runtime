@@ -30,52 +30,44 @@
  ****************************************************************************/
 
 #include <sys/stat.h>
-
-#include "adaint.h"
-
 #include <stdio.h>
+#include "adaint.h"
+#include "Winrt.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-int
-get_char (void)
+    
+int get_char (void)
 {
-  return getchar ();
+  return fgetc (stdin);
 }
 
-//int
-//get_int (void)
-//{
-//  int x;
-//
-//  scanf (" %d", &x);
-//  return x;
-//}
-//
-//void
-//put_int (int x)
-//{
-//   fprintf (stdout, "%d", x);
-//}
-//
-//void
-//put_int_stderr (int x)
-//{
-//  fprintf (stderr, "%d", x);
-//}
-
-void
-put_char (int c)
+void put_char(int c)
 {
-  putchar (c);
+    fputc(c, stdout);
 }
 
-void
-put_char_stderr (int c)
+void put_char_stderr(int c)
 {
-  fputc (c, stderr);
+    fputc(c, stderr);
+}
+
+int get_int (void)
+{
+  int x;
+  WINRT_fscanf_s (stdin, " %d", &x);
+  return x;
+}
+
+void put_int (int x)
+{
+    WINRT_fprintf_s(stdout, "%d", x);
+}
+
+void put_int_stderr (int x)
+{
+    WINRT_fprintf_s(stderr, "%d", x);
 }
 
 #ifdef __cplusplus

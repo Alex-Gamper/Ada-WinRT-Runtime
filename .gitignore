@@ -28,6 +28,8 @@ build/*.stdout
 build/*.ali
 build/*.o
 build/*.obj
+build/*.d
+build/*.lexch
 adalib/lib*.a
 adalib/*.ali
 

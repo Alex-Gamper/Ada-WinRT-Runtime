@@ -211,60 +211,70 @@ getc_immediate_common (FILE *stream,
                        int *avail,
                        int waiting)
 {
-  int fd = _fileno (stream);
-  int char_waiting;
-  int eot_ch = 4; /* Ctrl-D */
+    int fd = _fileno (stream);
+    int char_waiting;
+    int eot_ch = 4; /* Ctrl-D */
 
-  if (_isatty (fd))
+    if (_isatty (fd))
     {
-      if (waiting)
-	{
-	  *ch = _getch ();
-
-	  if (*ch == eot_ch)
-	    *end_of_file = 1;
-	  else
-	    *end_of_file = 0;
-
-	  *avail = 1;
-	}
-      else /* ! waiting */
-	{
-	  char_waiting = _kbhit();
-
-	  if (char_waiting == 1)
+        if (waiting)
 	    {
-	      *avail = 1;
-	      *ch = _getch ();
+	        *ch = fgetc (stream);
 
-	      if (*ch == eot_ch)
-		*end_of_file = 1;
-	      else
-		*end_of_file = 0;
+	        if (*ch == eot_ch)
+	        *end_of_file = 1;
+	        else
+	        *end_of_file = 0;
+
+	        *avail = 1;
 	    }
-	  else
+        else /* ! waiting */
 	    {
-	      *avail = 0;
-	      *end_of_file = 0;
+            *avail = 0;
+            *end_of_file = 0;
+
+            HANDLE hConsole = GetStdHandle((DWORD) -10);
+            if (hConsole != INVALID_HANDLE_VALUE)
+            {
+                INPUT_RECORD    lpBuffer;
+                DWORD           nLength = 1;
+                DWORD           lpNumberOfEventsRead = 0;
+                
+                BOOL peeked = PeekConsoleInput(hConsole, &lpBuffer, nLength, &lpNumberOfEventsRead);
+                if (peeked != 0)
+                {
+                    if (lpNumberOfEventsRead > 0)
+                    {
+                        *avail = 1;
+                        *ch = fgetc(stream);
+
+                        if (*ch == eot_ch)
+                            *end_of_file = 1;
+                        else
+                            *end_of_file = 0;
+
+                    }
+                }
+            }
 	    }
-	}
     }
-  else
+    else
     {
-      /* If we're not on a terminal, then we don't need any fancy processing.
-	 Also this is the only thing that's left if we're not on one of the
-	 supported systems; which means that for non supported systems,
-         get_immediate may wait for a carriage return on terminals. */
-      *ch = fgetc (stream);
-      if (feof (stream))
+        /* If we're not on a terminal, then we don't need any fancy processing.
+	    Also this is the only thing that's left if we're not on one of the
+	    supported systems; which means that for non supported systems,
+            get_immediate may wait for a carriage return on terminals. */
+        *ch = fgetc (stream);
+
+        if (feof (stream))
         {
-          *end_of_file = 1;
-          *avail = 0;
+            *end_of_file = 1;
+            *avail = 0;
         }
-      else
+        else
         {
-          *end_of_file = 0;
-          *avail = 1;
+            *end_of_file = 0;
+            *avail = 1;
         }
     }
 }

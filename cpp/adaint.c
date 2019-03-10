@@ -1660,32 +1660,45 @@ __gnat_is_symbolic_link (char *name ATTRIBUTE_UNUSED)
    return __gnat_is_symbolic_link_attr (name, &attr);
 }
 
+static void win32_spawn(char *command, char *args[], HANDLE *h, int *pid, int blocking);
+
 int
 __gnat_portable_spawn (char *args[] ATTRIBUTE_UNUSED)
 {
-  int status ATTRIBUTE_UNUSED = 0;
-  int finished ATTRIBUTE_UNUSED;
-  int pid ATTRIBUTE_UNUSED;
+    HANDLE h = NULL;
+    int pid;
 
-  /* args[0] must be quotes as it could contain a full pathname with spaces */
-  char *args_0 = args[0];
-  args[0] = (char *)xmalloc (strlen (args_0) + 3);
-  strcpy (args[0], "\"");
-  strcat (args[0], args_0);
-  strcat (args[0], "\"");
+    win32_spawn(args[0], args, &h, &pid, 1);
+    if (h != NULL)
+    {
+        return pid;
+    }
+    else
+        return -1;
+    
+    //int status ATTRIBUTE_UNUSED = 0;
+    //int finished ATTRIBUTE_UNUSED;
+    //int pid ATTRIBUTE_UNUSED;
 
-  status = _spawnvp (_P_WAIT, args_0, (const char * const*)args);
+    ///* args[0] must be quotes as it could contain a full pathname with spaces */
+    //char *args_0 = args[0];
+    //args[0] = (char *) xmalloc (strlen (args_0) + 3);
+    //strcpy (args[0], "\"");
+    //strcat (args[0], args_0);
+    //strcat (args[0], "\"");
 
-  /* restore previous value */
-  free (args[0]);
-  args[0] = (char *)args_0;
+    //status = _spawnvp (_P_WAIT, args_0, (const char * const*) args);
 
-  if (status < 0)
-    return -1;
-  else
-    return status;
+    ///* restore previous value */
+    //free (args[0]);
+    //args[0] = (char *)args_0;
 
-  return 0;
+    //if (status < 0)
+    //return -1;
+    //else
+    //return status;
+
+    //return 0;
 }
 
 /* Create a copy of the given file descriptor.
@@ -1807,79 +1820,102 @@ __gnat_win32_remove_handle (HANDLE h, int pid)
   return found;
 }
 
-static void
-win32_no_block_spawn (char *command, char *args[], HANDLE *h, int *pid)
+static void win32_spawn (char *command, char *args[], HANDLE *h, int *pid, int blocking)
 {
-  BOOL result;
-  STARTUPINFO SI;
-  PROCESS_INFORMATION PI;
-  SECURITY_ATTRIBUTES SA;
-  int csize = 1;
-  char *full_command;
-  int k;
+    BOOL result;
+    STARTUPINFO SI;
+    PROCESS_INFORMATION PI;
+    SECURITY_ATTRIBUTES SA;
+    int csize = 1;
+    char *full_command;
+    int k;
 
-  /* compute the total command line length */
-  k = 0;
-  while (args[k])
+    /* compute the total command line length */
+    k = 0;
+    while (args[k])
     {
-      csize += strlen (args[k]) + 1;
-      k++;
+        csize += strlen (args[k]) + 1;
+        k++;
     }
 
-  full_command = (char *) xmalloc (csize);
+    full_command = (char *) xmalloc (csize);
 
-  /* Startup info. */
-  SI.cb          = sizeof (STARTUPINFO);
-  SI.lpReserved  = NULL;
-  SI.lpReserved2 = NULL;
-  SI.lpDesktop   = NULL;
-  SI.cbReserved2 = 0;
-  SI.lpTitle     = NULL;
-  SI.dwFlags     = 0;
-  SI.wShowWindow = SW_HIDE;
+    /* Startup info. */
+    SI.cb          = sizeof (STARTUPINFO);
+    SI.lpReserved  = NULL;
+    SI.lpReserved2 = NULL;
+    SI.lpDesktop   = NULL;
+    SI.cbReserved2 = 0;
+    SI.lpTitle     = NULL;
+    SI.dwFlags     = 0;
+    SI.wShowWindow = SW_HIDE;
 
-  /* Security attributes. */
-  SA.nLength = sizeof (SECURITY_ATTRIBUTES);
-  SA.bInheritHandle = TRUE;
-  SA.lpSecurityDescriptor = NULL;
+    /* Security attributes. */
+    SA.nLength = sizeof (SECURITY_ATTRIBUTES);
+    SA.bInheritHandle = TRUE;
+    SA.lpSecurityDescriptor = NULL;
 
-  /* Prepare the command string. */
-  strcpy (full_command, command);
-  strcat (full_command, " ");
+    /* args[0] should be quotes as it could contain a full pathname with spaces */
+    //char *args_0 = args[0];
+    //args[0] = (char *) xmalloc (strlen (args_0) + 3);
+    //strcpy (args[0], "\"");
+    //strcat (args[0], args_0);
+    //strcat (args[0], "\"");
 
-  k = 1;
-  while (args[k])
+    /* Prepare the command string. */
+    strcpy (full_command, command);
+    strcat (full_command, " ");
+
+    k = 1;
+    while (args[k])
     {
-      strcat (full_command, args[k]);
-      strcat (full_command, " ");
-      k++;
+        strcat (full_command, args[k]);
+        strcat (full_command, " ");
+        k++;
     }
 
-  {
-    int wsize = csize * 2;
-    TCHAR *wcommand = (TCHAR *) xmalloc (wsize);
-
-    S2WSC (wcommand, full_command, wsize);
-
-    free (full_command);
-
-    result = CreateProcess
-      (NULL, wcommand, &SA, NULL, TRUE,
-       GetPriorityClass (GetCurrentProcess()), NULL, NULL, &SI, &PI);
-
-    free (wcommand);
-  }
-
-  if (result == TRUE)
     {
-      CloseHandle (PI.hThread);
-      *h = PI.hProcess;
-      *pid = PI.dwProcessId;
+        int wsize = csize * 2;
+        TCHAR *wcommand = (TCHAR *) xmalloc (wsize);
+
+        S2WSC (wcommand, full_command, wsize);
+        free (full_command);
+        result = CreateProcess (NULL, wcommand, &SA, NULL, TRUE, GetPriorityClass (GetCurrentProcess()), NULL, NULL, &SI, &PI);
+        free (wcommand);
     }
-  else
+
+    if (blocking == 0)
     {
-      *h = NULL;
-      *pid = 0;
+        if (result == TRUE)
+        {
+            CloseHandle(PI.hThread);
+            *h = PI.hProcess;
+            *pid = PI.dwProcessId;
+        }
+        else
+        {
+            *h = NULL;
+            *pid = 0;
+        }
+    }
+    else
+    {
+        if (result == TRUE)
+        {
+            DWORD exitCode = 0;
+            WaitForSingleObject(PI.hProcess, INFINITE);
+            result = GetExitCodeProcess(PI.hProcess, &exitCode);
+
+            CloseHandle(PI.hProcess);
+            CloseHandle(PI.hThread);
+            *h = PI.hProcess;
+            *pid = (int) exitCode;
+        }
+        else
+        {
+            *h = NULL;
+            *pid = -1; // Exit Status
+        }
     }
 }
 
@@ -1985,7 +2021,7 @@ __gnat_portable_no_block_spawn (char *args[] ATTRIBUTE_UNUSED)
   HANDLE h = NULL;
   int pid;
 
-  win32_no_block_spawn (args[0], args, &h, &pid);
+  win32_spawn (args[0], args, &h, &pid, 0);
   if (h != NULL)
     {
       add_handle (h, pid);

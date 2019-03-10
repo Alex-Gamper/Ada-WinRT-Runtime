@@ -230,12 +230,12 @@ package System.CRTL is
    pragma Import (C, open, "__gnat_open");
 
    function close (fd : int) return int;
-   pragma Import (C, close, "close");
+   pragma Import (C, close, "_close");
 
    function read (fd : int; buffer : chars; count : size_t) return ssize_t;
-   pragma Import (C, read, "read");
+   pragma Import (C, read, "_read");
 
    function write (fd : int; buffer : chars; count : size_t) return ssize_t;
-   pragma Import (C, write, "write");
+   pragma Import (C, write, "_write");
 
 end System.CRTL;

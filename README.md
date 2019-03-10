@@ -14,9 +14,10 @@ tba (work in progress)
 ### Build instructions
 
 From a command prompt that has your gcc/gnat x64 distribution/build environments bin directory in its path,
-simply run the following command. This will do a gprbuild & gprinstall of the WinRT-Runtime.gpr
+simply run the following commands.
 
-* .\Build.cmd
+* .\gprbuild -p -P Winrt_runtime.gpr
+* .\gprinstall -f -p -P Winrt_runtime.gpr
 
 ### Notes
 

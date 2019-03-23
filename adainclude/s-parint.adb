@@ -53,7 +53,7 @@ package body System.Partition_Interface is
    Pkg_Tail : Pkg_List;
 
    function getpid return Integer;
-   pragma Import (C, getpid);
+   pragma Import (C, getpid, "_getpid");
 
    PID : constant Integer := getpid;
 

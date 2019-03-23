@@ -202,18 +202,18 @@ struct __cxa_exception
 
    Here is a quick summary of the tables organization:
 
-	  +-- Unwind_Context (pc, ...)
-	  |
-	  |(pc)
-	  |
-	  |   CALL-SITE[]
-	  |
-	  |   +=============================================================+
-	  |   | region-start + length |  landing-pad   | first-action-index |
-	  |   +=============================================================+
-	  +-> |       pc range          0 => no-action   0 => cleanups only |
-	      |                         !0 => jump @              N --+     |
-	      +====================================================== | ====+
+      +-- Unwind_Context (pc, ...)
+      |
+      |(pc)
+      |
+      |   CALL-SITE[]
+      |
+      |   +=============================================================+
+      |   | region-start + length |  landing-pad   | first-action-index |
+      |   +=============================================================+
+      +-> |       pc range          0 => no-action   0 => cleanups only |
+          |                         !0 => jump @              N --+     |
+          +====================================================== | ====+
                                                                       |
                                                                       |
        ACTION []                                                      |
@@ -228,9 +228,9 @@ struct __cxa_exception
                                              |
                                              |
        TTYPES []                             |
-					     |  Offset negated from
-		 +=====================+     |  the actual base.
-		 |     ttype-value     |     |
+                         |  Offset negated from
+         +=====================+     |  the actual base.
+         |     ttype-value     |     |
     +============+=====================+     |
     |            |        ...          |     |
     |    ...     |     exception id    | <---+
@@ -331,15 +331,15 @@ struct __cxa_exception
      |   (Ada frame)
      |
      +--> __gnat_personality_v0 (context, exception)
-	   |
-	   +--> get_region_description_for (context)
-	   |
-	   +--> get_action_description_for (ip, exception, region)
-	   |       |
-	   |       +--> get_call_site_action_for (context, region)
-	   |            (one version for each underlying scheme)
+       |
+       +--> get_region_description_for (context)
+       |
+       +--> get_action_description_for (ip, exception, region)
+       |       |
+       |       +--> get_call_site_action_for (context, region)
+       |            (one version for each underlying scheme)
            |
-	   +--> setup_to_install (context)
+       +--> setup_to_install (context)
 
    This unit is inspired from the C++ version found in eh_personality.cc,
    part of libstdc++-v3.
@@ -470,7 +470,7 @@ get_region_description_for (_Unwind_Context *uw_context,
      nothing we can/should do.  */
   region->lsda
     = (_Unwind_Ptr) (uw_context
-		     ? _Unwind_GetLanguageSpecificData (uw_context) : 0);
+             ? _Unwind_GetLanguageSpecificData (uw_context) : 0);
 
   if (! region->lsda)
     return;
@@ -623,27 +623,27 @@ get_call_site_action_for (_Unwind_Ptr call_site,
       const unsigned char *p;
 
       /* Let the caller know there may be an action to take, but let it
-	 determine the kind.  */
+     determine the kind.  */
       action->kind = unknown;
 
       /* We have a direct index into the call-site table, but this table is
-	 made of leb128 values, the encoding length of which is variable.  We
-	 can't merely compute an offset from the index, then, but have to read
-	 all the entries before the one of interest.  */
+     made of leb128 values, the encoding length of which is variable.  We
+     can't merely compute an offset from the index, then, but have to read
+     all the entries before the one of interest.  */
       p = region->call_site_table;
       do
-	{
-	  p = read_uleb128 (p, &cs_lp);
-	  p = read_uleb128 (p, &cs_action);
-	}
+    {
+      p = read_uleb128 (p, &cs_lp);
+      p = read_uleb128 (p, &cs_action);
+    }
       while (--call_site);
 
       action->landing_pad = cs_lp + 1;
 
       if (cs_action)
-	action->table_entry = region->action_table + cs_action - 1;
+    action->table_entry = region->action_table + cs_action - 1;
       else
-	action->table_entry = 0;
+    action->table_entry = 0;
     }
 }
 
@@ -673,34 +673,34 @@ get_call_site_action_for (_Unwind_Ptr ip,
       p = read_uleb128 (p, &cs_action);
 
    //   db (DB_CSITE,
-	  //"c_site @ %p (+%p), len = %p, lpad @ %p (+%p)\n",
-	  //(char *)region->base + cs_start, (void *)cs_start, (void *)cs_len,
-	  //(char *)region->lp_base + cs_lp, (void *)cs_lp);
+      //"c_site @ %p (+%p), len = %p, lpad @ %p (+%p)\n",
+      //(char *)region->base + cs_start, (void *)cs_start, (void *)cs_len,
+      //(char *)region->lp_base + cs_lp, (void *)cs_lp);
 
       /* The table is sorted, so if we've passed the IP, stop.  */
       if (ip < region->base + cs_start)
- 	break;
+    break;
 
       /* If we have a match, fill the ACTION fields accordingly.  */
       else if (ip < region->base + cs_start + cs_len)
-	{
-	  /* Let the caller know there may be an action to take, but let it
-	     determine the kind.  */
-	  action->kind = unknown;
+    {
+      /* Let the caller know there may be an action to take, but let it
+         determine the kind.  */
+      action->kind = unknown;
 
-	  if (cs_lp)
-	    action->landing_pad = region->lp_base + cs_lp;
-	  else
-	    action->landing_pad = 0;
+      if (cs_lp)
+        action->landing_pad = region->lp_base + cs_lp;
+      else
+        action->landing_pad = 0;
 
-	  if (cs_action)
-	    action->table_entry = region->action_table + cs_action - 1;
-	  else
-	    action->table_entry = 0;
+      if (cs_action)
+        action->table_entry = region->action_table + cs_action - 1;
+      else
+        action->table_entry = 0;
 
-	  //db (DB_CSITE, "+++\n");
-	  return;
-	}
+      //db (DB_CSITE, "+++\n");
+      return;
+    }
     }
 
   //db (DB_CSITE, "---\n");
@@ -738,7 +738,7 @@ extern struct Exception_Data Non_Ada_Error;
 
 static int
 exception_class_eq (const _GNAT_Exception *except,
-		    const _Unwind_Exception_Class ec)
+            const _Unwind_Exception_Class ec)
 {
   return except->common.exception_class == ec;
 }
@@ -760,7 +760,7 @@ is_handled_by (_Unwind_Ptr choice, _GNAT_Exception *propagated_exception)
       _Unwind_Ptr E = (_Unwind_Ptr) EID_For (propagated_exception);
 
       if (choice == GNAT_UNHANDLED_OTHERS)
-	return unhandler;
+    return unhandler;
 
       E = (_Unwind_Ptr) EID_For (propagated_exception);
 
@@ -768,7 +768,7 @@ is_handled_by (_Unwind_Ptr choice, _GNAT_Exception *propagated_exception)
          all_others" matches anything and "when others" matches anything
          unless explicitly stated otherwise in the propagated occurrence.  */
       if (choice == E || (choice == GNAT_OTHERS && Is_Handled_By_Others (E)))
-	return handler;
+    return handler;
 
       /* Otherwise, it doesn't match an Ada choice.  */
       return nothing;
@@ -790,15 +790,15 @@ is_handled_by (_Unwind_Ptr choice, _GNAT_Exception *propagated_exception)
     {
       void *choice_typeinfo = Foreign_Data_For (choice);
       void *except_typeinfo =
-	(((struct __cxa_exception *)
-	  ((_Unwind_Exception *)propagated_exception + 1)) - 1)
-	->exceptionType;
+    (((struct __cxa_exception *)
+      ((_Unwind_Exception *)propagated_exception + 1)) - 1)
+    ->exceptionType;
 
       /* Typeinfo are directly compared, which might not be correct if they
-	 aren't merged.  ??? We should call the == operator if this module is
-	 compiled in C++.  */
+     aren't merged.  ??? We should call the == operator if this module is
+     compiled in C++.  */
       if (choice_typeinfo == except_typeinfo)
-	return handler;
+    return handler;
     }
 #endif
 
@@ -841,9 +841,9 @@ get_action_description_for (_Unwind_Ptr ip,
       action->kind = cleanup;
       action->ttype_filter = cleanup_filter;
       /* The filter initialization is not strictly necessary, as cleanup-only
-	 landing pads don't look at the filter value.  It is there to ensure
-	 we don't pass random values and so trigger potential confusion when
-	 installing the context later on.  */
+     landing pads don't look at the filter value.  It is there to ensure
+     we don't pass random values and so trigger potential confusion when
+     installing the context later on.  */
       return;
     }
 
@@ -856,56 +856,56 @@ get_action_description_for (_Unwind_Ptr ip,
       action->kind = nothing;
 
       while (1)
-	{
-	  p = read_sleb128 (p, &ar_filter);
-	  read_sleb128 (p, &ar_disp);
-	  /* Don't assign p here, as it will be incremented by ar_disp
-	     below.  */
+    {
+      p = read_sleb128 (p, &ar_filter);
+      read_sleb128 (p, &ar_disp);
+      /* Don't assign p here, as it will be incremented by ar_disp
+         below.  */
 
-	  /* Null filters are for cleanups. */
-	  if (ar_filter == cleanup_filter)
-	    {
-	      action->kind = cleanup;
-	      action->ttype_filter = cleanup_filter;
-	      /* The filter initialization is required here, to ensure
-		 the target landing pad branches to the cleanup code if
-		 we happen not to find a matching handler.  */
-	    }
+      /* Null filters are for cleanups. */
+      if (ar_filter == cleanup_filter)
+        {
+          action->kind = cleanup;
+          action->ttype_filter = cleanup_filter;
+          /* The filter initialization is required here, to ensure
+         the target landing pad branches to the cleanup code if
+         we happen not to find a matching handler.  */
+        }
 
-	  /* Positive filters are for regular handlers.  */
-	  else if (ar_filter > 0)
-	    {
+      /* Positive filters are for regular handlers.  */
+      else if (ar_filter > 0)
+        {
               /* Do not catch an exception if the _UA_FORCE_UNWIND flag is
                  passed (to follow the ABI).  */
               if (!(uw_phase & _UA_FORCE_UNWIND))
                 {
-		  enum action_kind act;
+          enum action_kind act;
 
                   /* See if the filter we have is for an exception which
                      matches the one we are propagating.  */
                   _Unwind_Ptr choice =
-		    get_ttype_entry_for (region, ar_filter);
+            get_ttype_entry_for (region, ar_filter);
 
-		  act = is_handled_by (choice, gnat_exception);
+          act = is_handled_by (choice, gnat_exception);
                   if (act != nothing)
                     {
-		      action->kind = act;
+              action->kind = act;
                       action->ttype_filter = ar_filter;
                       return;
                     }
                 }
-	    }
+        }
 
-	  /* Negative filter values are for C++ exception specifications.
-	     Should not be there for Ada :/  */
-	  else
-	    db (DB_ERR, "========> Err, filter < 0 for Ada/dwarf\n");
+      /* Negative filter values are for C++ exception specifications.
+         Should not be there for Ada :/  */
+      else
+        db (DB_ERR, "========> Err, filter < 0 for Ada/dwarf\n");
 
-	  if (ar_disp == 0)
-	    return;
+      if (ar_disp == 0)
+        return;
 
-	  p += ar_disp;
-	}
+      p += ar_disp;
+    }
     }
 }
 
@@ -923,12 +923,12 @@ setup_to_install (_Unwind_Context *uw_context,
      _Unwind_Resume (and thus to this personality routine) if we are jumping
      to a cleanup.  */
   _Unwind_SetGR (uw_context, __builtin_eh_return_data_regno (0),
-		 (_Unwind_Word)uw_exception);
+         (_Unwind_Word)uw_exception);
 
   /* 2/ handler switch value register, which will also be used by the target
      landing pad to decide what action it shall take.  */
   _Unwind_SetGR (uw_context, __builtin_eh_return_data_regno (1),
-		 (_Unwind_Word)uw_filter);
+         (_Unwind_Word)uw_filter);
 
   /* Setup the address we should jump at to reach the code where there is the
      "something" we found.  */
@@ -959,7 +959,7 @@ extern void __gnat_notify_unhandled_exception (struct Exception_Occurrence *);
 
 static _Unwind_Reason_Code
 continue_unwind (struct _Unwind_Exception* ue_header ATTRIBUTE_UNUSED,
-		 struct _Unwind_Context* uw_context ATTRIBUTE_UNUSED)
+         struct _Unwind_Context* uw_context ATTRIBUTE_UNUSED)
 {
   return _URC_CONTINUE_UNWIND;
 }
@@ -969,8 +969,8 @@ continue_unwind (struct _Unwind_Exception* ue_header ATTRIBUTE_UNUSED,
 
 static _Unwind_Reason_Code
 personality_body (_Unwind_Action uw_phases,
-		  _Unwind_Exception *uw_exception,
-		  _Unwind_Context *uw_context)
+          _Unwind_Exception *uw_exception,
+          _Unwind_Context *uw_context)
 {
   region_descriptor region;
   action_descriptor action;
@@ -1011,28 +1011,28 @@ personality_body (_Unwind_Action uw_phases,
   if (uw_phases & _UA_SEARCH_PHASE)
     {
       if (action.kind == cleanup)
-	{
-	  return continue_unwind (uw_exception, uw_context);
-	}
+    {
+      return continue_unwind (uw_exception, uw_context);
+    }
       else
-	{
+    {
 #ifndef CERT
-	  /* Trigger the appropriate notification routines before the second
-	     phase starts, when the stack is still intact.  First install what
-	     needs to be installed in the current exception buffer and fetch
-	     the Ada occurrence pointer to use.  */
+      /* Trigger the appropriate notification routines before the second
+         phase starts, when the stack is still intact.  First install what
+         needs to be installed in the current exception buffer and fetch
+         the Ada occurrence pointer to use.  */
 
-	  struct Exception_Occurrence *excep
-	    = __gnat_setup_current_excep (uw_exception, uw_phases);
+      struct Exception_Occurrence *excep
+        = __gnat_setup_current_excep (uw_exception, uw_phases);
 
-	  if (action.kind == unhandler)
-	    __gnat_notify_unhandled_exception (excep);
-	  else
-	    __gnat_notify_handled_exception (excep);
+      if (action.kind == unhandler)
+        __gnat_notify_unhandled_exception (excep);
+      else
+        __gnat_notify_handled_exception (excep);
 #endif
 
-	  return _URC_HANDLER_FOUND;
-	}
+      return _URC_HANDLER_FOUND;
+    }
     }
 
   /* We found something in cleanup/handler phase, which might be the handler
@@ -1088,24 +1088,26 @@ PERSONALITY_STORAGE _Unwind_Reason_Code
 PERSONALITY_FUNCTION (version_arg_t version_arg,
                       phases_arg_t phases_arg,
                       _Unwind_Exception_Class uw_exception_class
-		         ATTRIBUTE_UNUSED,
+                      ATTRIBUTE_UNUSED,
                       _Unwind_Exception *uw_exception,
                       _Unwind_Context *uw_context)
 {
-  /* Fetch the version and phases args with their nominal ABI types for later
-     use. This is a noop everywhere except on ia64-vms when called from the
-     Condition Handling Facility.  */
-  int uw_version = (int) version_arg;
-  _Unwind_Action uw_phases = (_Unwind_Action) phases_arg;
+    //OutputDebugString("__gnat_personality_imp() : started\n");
 
-  /* Check that we're called from the ABI context we expect, with a major
-     possible variation on VMS for IA64.  */
-  if (uw_version != 1)
+    /* Fetch the version and phases args with their nominal ABI types for later
+        use. This is a noop everywhere except on ia64-vms when called from the
+        Condition Handling Facility.  */
+    int uw_version = (int) version_arg;
+    _Unwind_Action uw_phases = (_Unwind_Action) phases_arg;
+
+    /* Check that we're called from the ABI context we expect, with a major
+        possible variation on VMS for IA64.  */
+    if (uw_version != 1)
     {
-      return _URC_FATAL_PHASE1_ERROR;
+        return _URC_FATAL_PHASE1_ERROR;
     }
 
-  return personality_body (uw_phases, uw_exception, uw_context);
+    return personality_body (uw_phases, uw_exception, uw_context);
 }
 
 /* Callback routine called by Unwind_ForcedUnwind to execute all the cleanup
@@ -1114,11 +1116,11 @@ PERSONALITY_FUNCTION (version_arg_t version_arg,
 #ifndef CERT
 _Unwind_Reason_Code
 __gnat_cleanupunwind_handler (int version ATTRIBUTE_UNUSED,
-			      _Unwind_Action phases,
-			      _Unwind_Exception_Class eclass ATTRIBUTE_UNUSED,
-			      struct _Unwind_Exception *exception,
-			      struct _Unwind_Context *context ATTRIBUTE_UNUSED,
-			      void *arg ATTRIBUTE_UNUSED)
+                  _Unwind_Action phases,
+                  _Unwind_Exception_Class eclass ATTRIBUTE_UNUSED,
+                  struct _Unwind_Exception *exception,
+                  struct _Unwind_Context *context ATTRIBUTE_UNUSED,
+                  void *arg ATTRIBUTE_UNUSED)
 {
   /* Terminate when the end of the stack is reached.  */
   if ((phases & _UA_END_OF_STACK) != 0
@@ -1142,8 +1144,8 @@ __gnat_Unwind_RaiseException (_Unwind_Exception *e)
 
 _Unwind_Reason_Code
 __gnat_Unwind_ForcedUnwind (_Unwind_Exception *e ATTRIBUTE_UNUSED,
-			    _Unwind_Stop_Fn handler ATTRIBUTE_UNUSED,
-			    void *argument ATTRIBUTE_UNUSED)
+                _Unwind_Stop_Fn handler ATTRIBUTE_UNUSED,
+                void *argument ATTRIBUTE_UNUSED)
 {
   return _Unwind_ForcedUnwind (e, handler, argument);
 }
@@ -1161,7 +1163,7 @@ __gnat_map_SEH (EXCEPTION_RECORD* ExceptionRecord, const char **msg);
 
 struct _Unwind_Exception *
 __gnat_create_machine_occurrence_from_signal_handler (Exception_Id,
-						      const char *);
+                              const char *);
 
 /* Unwind opcodes.  */
 #define UWOP_PUSH_NONVOL 0
@@ -1184,170 +1186,202 @@ __gnat_create_machine_occurrence_from_signal_handler (Exception_Id,
 static void
 __gnat_adjust_context (unsigned char *unw, ULONG64 rsp)
 {
-  unsigned int len;
+    //OutputDebugString("__gnat_adjust_context() : started\n");
+    unsigned int len;
 
-  /* Version 1 or 2.  */
-  if (unw[0] != 1 && unw[0] != 2)
-    return;
-  /* No flags, no prologue.  */
-  if (unw[1] != 0)
-    return;
-  len = unw[2];
-  /* No frame.  */
-  if (unw[3] != 0)
-    return;
-  /* ??? Skip the first 2 undocumented opcodes for version 2.  */
-  if (unw[0] == 2)
-    unw += 8;
-  else
-    unw += 4;
-  while (len > 0)
+    /* Version 1 or 2.  */
+    if (unw[0] != 1 && unw[0] != 2)
+        return;
+    
+    /* No flags, no prologue.  */
+    if (unw[1] != 0)
+        return;
+    
+    len = unw[2];
+    
+    /* No frame.  */
+    if (unw[3] != 0)
+        return;
+    
+    /* ??? Skip the first 2 undocumented opcodes for version 2.  */
+    if (unw[0] == 2)
+        unw += 8;
+    else
+        unw += 4;
+
+    while (len > 0)
     {
-      /* Offset in prologue = 0.  */
-      if (unw[0] != 0)
-	return;
-      switch (unw[1] & 0xf)
-	{
-	case UWOP_ALLOC_LARGE:
-	  /* Expect < 512KB.  */
-	  if ((unw[1] & 0xf0) != 0)
-	    return;
-	  rsp += *(unsigned short *)(unw + 2) * 8;
-	  len--;
-	  unw += 2;
-	  break;
-	case UWOP_SAVE_NONVOL:
-	case UWOP_SAVE_XMM128:
-	  len--;
-	  unw += 2;
-	  break;
-	case UWOP_PUSH_MACHFRAME:
-	  {
-	    ULONG64 *rip;
-	    rip = (ULONG64 *)rsp;
-	    if ((unw[1] & 0xf0) == 0x10)
-	      rip++;
-	    /* Adjust rip.  */
-	    (*rip)++;
-	  }
-	  return;
-	default:
-	  /* Unexpected.  */
-	  return;
-	}
-      unw += 2;
-      len--;
+        /* Offset in prologue = 0.  */
+        if (unw[0] != 0)
+            return;
+        switch (unw[1] & 0xf)
+        {
+            case UWOP_ALLOC_LARGE:
+                /* Expect < 512KB.  */
+                if ((unw[1] & 0xf0) != 0)
+                    return;
+                rsp += *(unsigned short *)(unw + 2) * 8;
+                len--;
+                unw += 2;
+                break;
+            case UWOP_SAVE_NONVOL:
+            case UWOP_SAVE_XMM128:
+                len--;
+                unw += 2;
+                break;
+            case UWOP_PUSH_MACHFRAME:
+                {
+                    ULONG64 *rip;
+                    rip = (ULONG64 *)rsp;
+                    if ((unw[1] & 0xf0) == 0x10)
+                        rip++;
+                    /* Adjust rip.  */
+                    (*rip)++;
+                }
+                return;
+            default:
+                /* Unexpected.  */
+                return;
+        }
+        unw += 2;
+        len--;
     }
 }
 
+//#include "Winrt.h"
+
 EXCEPTION_DISPOSITION
 __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
-			 PCONTEXT ms_orig_context,
-			 PDISPATCHER_CONTEXT ms_disp)
+             PCONTEXT ms_orig_context,
+             PDISPATCHER_CONTEXT ms_disp)
 {
-  /* Possibly transform run-time errors into Ada exceptions.  */
-  if (!(ms_exc->ExceptionCode & STATUS_USER_DEFINED))
+    //OutputDebugString("\n__gnat_personality_seh0() : started\n");
+    /* Possibly transform run-time errors into Ada exceptions.  */
+    if (!(ms_exc->ExceptionCode & STATUS_USER_DEFINED))
     {
-      struct Exception_Data *exception;
-      const char *msg;
-      ULONG64 excpip = (ULONG64) ms_exc->ExceptionAddress;
+        struct Exception_Data *exception;
+        const char *msg;
+        ULONG64 excpip = (ULONG64) ms_exc->ExceptionAddress;
 
-      if (excpip != 0
-	  && excpip >= (ms_disp->ImageBase
-			+ ms_disp->FunctionEntry->BeginAddress)
-	  && excpip < (ms_disp->ImageBase
-		       + ms_disp->FunctionEntry->EndAddress))
-	{
-	  /* This is a fault in this function.  We need to adjust the return
-	     address before raising the GCC exception.  In order to do that,
-	     we need to locate the machine frame that has been pushed onto
-	     the stack in response to the hardware exception, so we will do
-	     a private unwinding from here, i.e. the frame of the personality
-	     routine, up to the frame immediately following the frame of this
-	     function.  This frame corresponds to a dummy prologue which is
-	     never actually executed but instead appears before the real entry
-	     point of an interrupt routine and exists only to provide a place
-	     to simulate the push of a machine frame.  */
-	  CONTEXT context;
-	  PRUNTIME_FUNCTION mf_func = NULL;
-	  ULONG64 mf_imagebase;
-	  ULONG64 mf_rsp = 0;
+        if (excpip != 0
+            && excpip >= (ms_disp->ImageBase + ms_disp->FunctionEntry->BeginAddress)
+            && excpip < (ms_disp->ImageBase + ms_disp->FunctionEntry->EndAddress))
+        {
+#if 1
+            /* This is a fault in this function.  We need to adjust the return
+                address before raising the GCC exception.  In order to do that,
+                we need to locate the machine frame that has been pushed onto
+                the stack in response to the hardware exception, so we will do
+                a private unwinding from here, i.e. the frame of the personality
+                routine, up to the frame immediately following the frame of this
+                function.  This frame corresponds to a dummy prologue which is
+                never actually executed but instead appears before the real entry
+                point of an interrupt routine and exists only to provide a place
+                to simulate the push of a machine frame.  */
+            CONTEXT context;
+            PRUNTIME_FUNCTION mf_func = NULL;
+            ULONG64 mf_imagebase;
+            ULONG64 mf_rsp = 0;
 
-	  /* Get the current context.  */
-	  RtlCaptureContext (&context);
+            /* Get the current context.  */
+            RtlCaptureContext(&context);
 
-	  while (1)
-	    {
-	      PRUNTIME_FUNCTION RuntimeFunction;
-	      ULONG64 ImageBase;
-	      VOID *HandlerData;
-	      ULONG64 EstablisherFrame;
+            while (1)
+            {
+                PRUNTIME_FUNCTION RuntimeFunction = NULL;
+                ULONG64 ImageBase = 0;
+                VOID *HandlerData = NULL;
+                ULONG64 EstablisherFrame = 0;
 
-	      /* Get function metadata.  */
-	      RuntimeFunction
-		= RtlLookupFunctionEntry (context.Rip, &ImageBase,
-					  ms_disp->HistoryTable);
+                /* Get function metadata.  */
+                RuntimeFunction = RtlLookupFunctionEntry (context.Rip, &ImageBase, ms_disp->HistoryTable);
 
-	      /* Stop once we reached the frame of this function.  */
-	      if (RuntimeFunction == ms_disp->FunctionEntry)
-		break;
+                /* Stop once we reached the frame of this function.  */
+                if (RuntimeFunction == ms_disp->FunctionEntry)
+                    break;
 
-	      mf_func = RuntimeFunction;
-	      mf_imagebase = ImageBase;
-	      mf_rsp = context.Rsp;
+                mf_func = RuntimeFunction;
+                mf_imagebase = ImageBase;
+                mf_rsp = context.Rsp;
 
-	      if (RuntimeFunction)
-		{
-		  /* Unwind.  */
-		  RtlVirtualUnwind (0, ImageBase, context.Rip, RuntimeFunction,
-				    &context, &HandlerData, &EstablisherFrame,
-				    NULL);
-		}
-	      else
-		{
-		  /* In case of failure, assume this is a leaf function.  */
-		  context.Rip = *(ULONG64 *) context.Rsp;
-		  context.Rsp += 8;
-		}
+                if (RuntimeFunction)
+                {
+                    //OutputDebugString("\tRtlVirtualUnwind() : calling\n");
+                    //WINRT_fprintf_s(stdout, "B - Original : %llx ImageBase : %llx Rip : %llx\n", ms_orig_context->Rip, ImageBase, context.Rip);
+                        /* Unwind.  */
+                    RtlVirtualUnwind (0, ImageBase, context.Rip, RuntimeFunction, &context, &HandlerData, &EstablisherFrame, NULL);
+                    //WINRT_fprintf_s(stdout, "A - Original : %llx ImageBase : %llx Rip : %llx RuntimeFunction : %llx \n", ms_orig_context->Rip, ImageBase, context.Rip, RuntimeFunction);
+                }
+                else
+                {
+                    /* In case of failure, assume this is a leaf function.  */
+                    context.Rip = *(ULONG64 *) context.Rsp;
+                    context.Rsp += 8;
+                }
 
-	      /* 0 means bottom of the stack.  */
-	      if (context.Rip == 0)
-		{
-		  mf_func = NULL;
-		  break;
-		}
-	    }
+                /* 0 means bottom of the stack.  */
+                if (context.Rip == 0)
+                {
+                    mf_func = NULL;
+                    break;
+                }
+            }
+            
+            //WINRT_fprintf_s(stdout, "ControlPc          %llx\n", ms_disp->ControlPc);
+            //WINRT_fprintf_s(stdout, "ImageBase          %llx\n", ms_disp->ImageBase);
+            //WINRT_fprintf_s(stdout, "FunctionEntry      %llx\n", ms_disp->FunctionEntry);
+            //WINRT_fprintf_s(stdout, "EstablisherFrame   %llx\n", ms_disp->EstablisherFrame);
+            //WINRT_fprintf_s(stdout, "TargetIp           %llx\n", ms_disp->TargetIp);
+            //WINRT_fprintf_s(stdout, "ContextRecord.Rip  %llx\n", ms_disp->ContextRecord->Rip);
+            //WINRT_fprintf_s(stdout, "ContextRecord.Rsp  %llx\n", ms_disp->ContextRecord->Rsp);
 
-	  /* If we have found the machine frame, adjust the return address.  */
-	  if (mf_func != NULL)
-	    __gnat_adjust_context
-	      ((unsigned char *)(mf_imagebase + mf_func->UnwindData), mf_rsp);
-	}
+            //WINRT_fprintf_s(stdout, "mf_func            %llx\n", mf_func);
+            //WINRT_fprintf_s(stdout, "mf_imagebase       %llx\n", mf_imagebase);
+            //WINRT_fprintf_s(stdout, "mf_rsp             %llx\n", mf_rsp);
 
-      exception = __gnat_map_SEH (ms_exc, &msg);
-      if (exception != NULL)
-	{
-	  /* Directly convert the system exception into a GCC one.
+            /* If we have found the machine frame, adjust the return address.  */
+            if (mf_func != NULL)
+                __gnat_adjust_context ((unsigned char *)(mf_imagebase + mf_func->UnwindData), mf_rsp);
+#else
+            PRUNTIME_FUNCTION RuntimeFunction = NULL;
+            ULONG64 ImageBase = 0;
+            PVOID RetVal = NULL;
+            
+            RetVal = RtlPcToFileHeader((PVOID)ms_orig_context->Rip, (PVOID*)&ImageBase);
+            if (RetVal != NULL)
+            {
+                RuntimeFunction = RtlLookupFunctionEntry(ms_orig_context->Rip, &ImageBase, ms_disp->HistoryTable);
+                if (RuntimeFunction != NULL)
+                {
+                    __gnat_adjust_context((unsigned char *)(ImageBase + RuntimeFunction->UnwindData), ms_orig_context->Rsp);
+                }
+            }
 
-	     This is really breaking the API, but is necessary for stack size
-	     reasons: the normal way is to call Raise_From_Signal_Handler,
-	     which builds the exception and calls _Unwind_RaiseException,
-	     which unwinds the stack and will call this personality routine.
-	     But the Windows unwinder needs about 2KB of stack.  */
-	  struct _Unwind_Exception *exc
-	    = __gnat_create_machine_occurrence_from_signal_handler (exception,
-								    msg);
-	  memset (exc->private_, 0, sizeof (exc->private_));
-	  ms_exc->ExceptionCode = STATUS_GCC_THROW;
-	  ms_exc->NumberParameters = 1;
-	  ms_exc->ExceptionInformation[0] = (ULONG_PTR)exc;
-	}
+            OutputDebugString("\tSkipped calling RtlVirtualUnwind()\n");
+#endif
+        }
+
+        exception = __gnat_map_SEH (ms_exc, &msg);
+        if (exception != NULL)
+        {
+            /* Directly convert the system exception into a GCC one.
+
+            This is really breaking the API, but is necessary for stack size
+            reasons: the normal way is to call Raise_From_Signal_Handler,
+            which builds the exception and calls _Unwind_RaiseException,
+            which unwinds the stack and will call this personality routine.
+            But the Windows unwinder needs about 2KB of stack.  */
+
+            struct _Unwind_Exception *exc = __gnat_create_machine_occurrence_from_signal_handler (exception, msg);
+            memset (exc->private_, 0, sizeof (exc->private_));
+            ms_exc->ExceptionCode = STATUS_GCC_THROW;
+            ms_exc->NumberParameters = 1;
+            ms_exc->ExceptionInformation[0] = (ULONG_PTR)exc;
+        }
 
     }
 
-  return
-    _GCC_specific_handler (ms_exc, this_frame, ms_orig_context, ms_disp,
-			   __gnat_personality_imp);
+  return _GCC_specific_handler (ms_exc, this_frame, ms_orig_context, ms_disp, __gnat_personality_imp);
 }
 
 const int __gnat_unwind_exception_size = sizeof (_Unwind_Exception);

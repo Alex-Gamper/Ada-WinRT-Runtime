@@ -91,10 +91,10 @@ package body GNAT.Expect is
    ------------------------------
 
    function Dup (Fd : File_Descriptor) return File_Descriptor;
-   pragma Import (C, Dup);
+   pragma Import (C, Dup, "_dup");
 
    procedure Dup2 (Old_Fd, New_Fd : File_Descriptor);
-   pragma Import (C, Dup2);
+   pragma Import (C, Dup2, "_dup2");
 
    procedure Kill (Pid : Process_Id; Sig_Num : Integer; Close : Integer);
    pragma Import (C, Kill, "__gnat_kill");

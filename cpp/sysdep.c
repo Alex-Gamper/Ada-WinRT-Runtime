@@ -284,6 +284,7 @@ getc_immediate_common (FILE *stream,
 
 #include <windows.h>
 
+#if 0
 /* Provide functions to echo the values passed to WinMain (windows bindings
    will want to import these).  We use the same names as the routines used
    by AdaMagic for compatibility.  */
@@ -296,7 +297,7 @@ int   rts_get_nShowCmd (void);
 char *
 rts_get_hInstance (void)
 {
-  return (char *)GetModuleHandleA (0);
+  return (char *) GetModuleHandleA (0);
 }
 
 char *
@@ -316,6 +317,7 @@ rts_get_nShowCmd (void)
 {
   return 1;
 }
+#endif
 
 /* This value is returned as the time zone offset when a valid value
    cannot be determined. It is simply a bizarre value that will never

@@ -76,9 +76,9 @@ __gnat_map_SEH (EXCEPTION_RECORD* ExceptionRecord, const char **msg)
     case EXCEPTION_ACCESS_VIOLATION:
       /* If the failing address isn't maximally aligned or if the page before
 	 the faulting page is not accessible, this is a program error.  */
-      if ((ExceptionRecord->ExceptionInformation[1] & 3) != 0
-	  || IsBadCodePtr
-	     ((FARPROC)(ExceptionRecord->ExceptionInformation[1] + 4096)))
+      if ((ExceptionRecord->ExceptionInformation[1] & 3) != 0)
+	  //|| IsBadCodePtr
+	  //   ((FARPROC)(ExceptionRecord->ExceptionInformation[1] + 4096)))
 	{
 	  *msg = "EXCEPTION_ACCESS_VIOLATION";
 	  return &program_error;

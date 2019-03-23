@@ -110,7 +110,7 @@ package body GNAT.Lock_Files is
       S : aliased String := Lock_File_Name & ASCII.NUL;
 
       procedure unlink (A : System.Address);
-      pragma Import (C, unlink, "unlink");
+      pragma Import (C, unlink, "_unlink");
 
    begin
       unlink (S'Address);

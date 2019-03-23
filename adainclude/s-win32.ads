@@ -178,7 +178,7 @@ package System.Win32 is
       dwCreationDisposition : DWORD;
       dwFlagsAndAttributes  : DWORD;
       hTemplateFile         : HANDLE) return HANDLE;
-   pragma Import (Stdcall, CreateFileA, "CreateFileA");
+   pragma Import (Stdcall, CreateFileA, "CreateFileFromAppA");
 
    function CreateFile
      (lpFileName            : Address;
@@ -188,12 +188,12 @@ package System.Win32 is
       dwCreationDisposition : DWORD;
       dwFlagsAndAttributes  : DWORD;
       hTemplateFile         : HANDLE) return HANDLE;
-   pragma Import (Stdcall, CreateFile, "CreateFileW");
+   pragma Import (Stdcall, CreateFile, "CreateFileFromAppW");
 
    function GetFileSize
      (hFile          : HANDLE;
-      lpFileSizeHigh : access DWORD) return BOOL;
-   pragma Import (Stdcall, GetFileSize, "GetFileSize");
+      lpFileSizeHigh : access Interfaces.C.size_t) return BOOL;
+   pragma Import (Stdcall, GetFileSize, "GetFileSizeEx");
 
    function SetFilePointer
      (hFile                : HANDLE;

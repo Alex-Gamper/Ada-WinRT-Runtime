@@ -50,38 +50,15 @@ package body Module_Name is
    -- Get --
    ---------
 
-   function Get (Addr : System.Address;
-                 Load_Addr : access System.Address)
-     return String
+   function Get
+     (Addr      : System.Address;
+      Load_Addr : access System.Address) return String
    is
-      Res     : DWORD;
-      hModule : aliased HANDLE;
-      Path    : String (1 .. 1_024);
+      pragma Unreferenced (Addr);
+      pragma Unreferenced (Load_Addr);
 
    begin
-      Load_Addr.all := System.Null_Address;
-
-      if GetModuleHandleEx
-           (GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-            Addr,
-            hModule'Access) = Win32.TRUE
-      then
-         Res := GetModuleFileName (hModule, Path'Address, Path'Length);
-
-         if FreeLibrary (hModule) = Win32.FALSE then
-            null;
-         end if;
-
-         if Res > 0 then
-            return Path (1 .. Positive (Res));
-         end if;
-      end if;
-
       return "";
-
-   exception
-      when others =>
-         return "";
    end Get;
 
    ------------------
@@ -90,7 +67,7 @@ package body Module_Name is
 
    function Is_Supported return Boolean is
    begin
-      return True;
+      return False;
    end Is_Supported;
 
 end Module_Name;

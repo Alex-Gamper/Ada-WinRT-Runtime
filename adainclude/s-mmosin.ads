@@ -105,7 +105,7 @@ package System.Mmap.OS_Interface is
          dwCreationDisposition : DWORD;
          dwFlagsAndAttributes  : DWORD;
          hTemplateFile         : HANDLE) return HANDLE;
-      pragma Import (Stdcall, CreateFile, "CreateFileW");
+      pragma Import (Stdcall, CreateFile, "CreateFileFromAppW");
 
       function WriteFile
         (hFile                  : HANDLE;
@@ -126,9 +126,9 @@ package System.Mmap.OS_Interface is
       function CloseHandle (hObject : HANDLE) return BOOL;
       pragma Import (Stdcall, CloseHandle, "CloseHandle");
 
-      function GetFileSize
-        (hFile : HANDLE; lpFileSizeHigh : access DWORD) return DWORD;
-      pragma Import (Stdcall, GetFileSize, "GetFileSize");
+      function GetFileSizeEx
+        (hFile : HANDLE; lpFileSizeHigh : access SIZE_T) return BOOL;
+      pragma Import (Stdcall, GetFileSizeEx, "GetFileSizeEx");
 
       function SetFilePointer
         (hFile                : HANDLE;
@@ -137,22 +137,21 @@ package System.Mmap.OS_Interface is
          dwMoveMethod         : DWORD) return DWORD;
       pragma Import (Stdcall, SetFilePointer, "SetFilePointer");
 
-      function CreateFileMapping
+      function CreateFileMappingFromApp
         (hFile                : HANDLE;
          lpSecurityAttributes : access SECURITY_ATTRIBUTES;
          flProtect            : DWORD;
-         dwMaximumSizeHigh    : DWORD;
-         dwMaximumSizeLow     : DWORD;
+         dwMaximumSize        : SIZE_T;
          lpName               : Standard.System.Address) return HANDLE;
-      pragma Import (Stdcall, CreateFileMapping, "CreateFileMappingW");
+      pragma Import (Stdcall, CreateFileMappingFromApp,
+      "CreateFileMappingFromApp");
 
-      function MapViewOfFile
+      function MapViewOfFileFromApp
         (hFileMappingObject   : HANDLE;
          dwDesiredAccess      : DWORD;
-         dwFileOffsetHigh     : DWORD;
-         dwFileOffsetLow      : DWORD;
+         dwFileOffset         : SIZE_T;
          dwNumberOfBytesToMap : SIZE_T) return Standard.System.Address;
-      pragma Import (Stdcall, MapViewOfFile, "MapViewOfFile");
+      pragma Import (Stdcall, MapViewOfFileFromApp, "MapViewOfFileFromApp");
 
       function UnmapViewOfFile
          (lpBaseAddress : Standard.System.Address) return BOOL;

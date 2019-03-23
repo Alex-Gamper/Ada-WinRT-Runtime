@@ -111,8 +111,9 @@ package body System.Mmap.OS_Interface is
          From_UTF8 (Filename) & Wide_Character'Val (0);
       File_Handle, Mapping_Handle  : HANDLE;
 
-      SizeH                        : aliased DWORD;
+      SizeH                        : aliased SIZE_T;
       Size                         : File_Size;
+      Ok                           : BOOL;
    begin
       if Write then
          dwDesiredAccess := GENERIC_READ + GENERIC_WRITE;
@@ -136,14 +137,11 @@ package body System.Mmap.OS_Interface is
 
       --  Compute its size
 
-      Size := File_Size (Win.GetFileSize (File_Handle, SizeH'Access));
-
-      if Size = Win.INVALID_FILE_SIZE then
+      Ok := Win.GetFileSizeEx (File_Handle, SizeH'Access);
+      if Ok /= 0 then
+         Size := File_Size (SizeH);
+      else
          return Invalid_System_File;
-      end if;
-
-      if SizeH /= 0 and then File_Size'Size > 32 then
-         Size := Size + (File_Size (SizeH) * 2 ** 32);
       end if;
 
       --  Then create a mapping object, if needed. On Win32, file memory
@@ -151,9 +149,9 @@ package body System.Mmap.OS_Interface is
 
       if Use_Mmap_If_Available then
          Mapping_Handle :=
-            Win.CreateFileMapping
+            Win.CreateFileMappingFromApp
               (File_Handle, null, PageFlags,
-               0, DWORD (Size), Standard.System.Null_Address);
+               SIZE_T (Size), Standard.System.Null_Address);
       else
          Mapping_Handle := Win.INVALID_HANDLE_VALUE;
       end if;
@@ -300,9 +298,9 @@ package body System.Mmap.OS_Interface is
       else
          Mapping := Invalid_System_Mapping;
          Mapping.Address :=
-            Win.MapViewOfFile
+            Win.MapViewOfFileFromApp
               (File.Mapping_Handle, Flags,
-               0, DWORD (Offset), SIZE_T (Length));
+               SIZE_T (Offset), SIZE_T (Length));
          Mapping.Length := Length;
       end if;
    end Create_Mapping;

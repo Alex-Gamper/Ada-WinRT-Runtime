@@ -1004,6 +1004,23 @@ __gnat_file_time_fd (int fd)
 
 /* Set the file time stamp.  */
 
+typedef struct _CREATEFILE2_EXTENDED_PARAMETERS {
+    DWORD                 dwSize;
+    DWORD                 dwFileAttributes;
+    DWORD                 dwFileFlags;
+    DWORD                 dwSecurityQosFlags;
+    LPSECURITY_ATTRIBUTES lpSecurityAttributes;
+    HANDLE                hTemplateFile;
+} CREATEFILE2_EXTENDED_PARAMETERS, *PCREATEFILE2_EXTENDED_PARAMETERS, *LPCREATEFILE2_EXTENDED_PARAMETERS; 
+
+HANDLE CreateFile2(
+    LPCWSTR                           lpFileName,
+    DWORD                             dwDesiredAccess,
+    DWORD                             dwShareMode,
+    DWORD                             dwCreationDisposition,
+    LPCREATEFILE2_EXTENDED_PARAMETERS pCreateExParams
+); 
+
 void
 __gnat_set_file_time_name (char *name, time_t time_stamp)
 {
@@ -1015,11 +1032,18 @@ __gnat_set_file_time_name (char *name, time_t time_stamp)
   TCHAR wname[MAXPATHLEN];
 
   S2WSC (wname, name, MAXPATHLEN);
+  CREATEFILE2_EXTENDED_PARAMETERS cfep = {0, 0, FILE_FLAG_BACKUP_SEMANTICS, 0, NULL, NULL};
+  HANDLE h = CreateFile2(wname, GENERIC_READ, FILE_SHARE_WRITE, OPEN_EXISTING, &cfep);
 
-  HANDLE h  = CreateFile
-    (wname, GENERIC_WRITE, FILE_SHARE_WRITE, NULL,
-     OPEN_EXISTING, FILE_FLAG_BACKUP_SEMANTICS,
-     NULL);
+  //HANDLE h  = CreateFile2W
+  //      (wname,
+  //      GENERIC_WRITE,
+  //      FILE_SHARE_WRITE,
+  //      NULL,
+  //      OPEN_EXISTING,
+  //      FILE_FLAG_BACKUP_SEMANTICS,
+  //      NULL);
+
   if (h == INVALID_HANDLE_VALUE)
     return;
   /* Add number of seconds between <Jan 1st 1601> and <Jan 1st 1970> */
@@ -1042,7 +1066,7 @@ __gnat_get_libraries_from_registry (void)
   char *result = (char *) xmalloc (1);
 
   result[0] = '\0';
-
+#if 0
   HKEY reg_key;
   DWORD name_size, value_size;
   char name[256];
@@ -1087,7 +1111,7 @@ __gnat_get_libraries_from_registry (void)
   /* Remove the trailing ";".  */
   if (result[0] != 0)
     result[strlen (result) - 1] = 0;
-
+#endif
   return result;
 }
 
@@ -1426,7 +1450,8 @@ __gnat_set_OWNER_ACL (TCHAR *wname,
 static int
 __gnat_can_use_acl (TCHAR *wname)
 {
-  return __gnat_use_acl && GetDriveTypeFromPath (wname) != DRIVE_REMOTE;
+    return FALSE;
+    // return __gnat_use_acl && GetDriveTypeFromPath (wname) != DRIVE_REMOTE;
 }
 
 #endif /* defined (_WIN32) */
@@ -2345,9 +2370,12 @@ __gnat_copy_attribs (char *from ATTRIBUTE_UNUSED, char *to ATTRIBUTE_UNUSED,
   if (mode != 2) {
      /* retrieve from times */
 
-     hfrom = CreateFile
-       (wfrom, GENERIC_READ, 0, NULL, OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL, NULL);
+      CREATEFILE2_EXTENDED_PARAMETERS cfep = { 0, FILE_ATTRIBUTE_NORMAL, 0, 0, NULL, NULL };
+      hfrom = CreateFile2(wfrom, GENERIC_READ, 0, OPEN_EXISTING, &cfep);
+      
+      //hfrom = CreateFile
+      // (wfrom, GENERIC_READ, 0, NULL, OPEN_EXISTING,
+      //  FILE_ATTRIBUTE_NORMAL, NULL);
 
      if (hfrom == INVALID_HANDLE_VALUE)
        return -1;
@@ -2361,9 +2389,10 @@ __gnat_copy_attribs (char *from ATTRIBUTE_UNUSED, char *to ATTRIBUTE_UNUSED,
 
      /* retrieve from times */
 
-     hto = CreateFile
-       (wto, GENERIC_WRITE, 0, NULL, OPEN_EXISTING,
-        FILE_ATTRIBUTE_NORMAL, NULL);
+     hto = CreateFile2(wto, GENERIC_WRITE, 0, OPEN_EXISTING, &cfep);
+     //hto = CreateFile
+     //  (wto, GENERIC_WRITE, 0, NULL, OPEN_EXISTING,
+     //   FILE_ATTRIBUTE_NORMAL, NULL);
 
      if (hto == INVALID_HANDLE_VALUE)
        return -1;
@@ -2417,6 +2446,7 @@ int
 __gnat_set_close_on_exec (int fd ATTRIBUTE_UNUSED,
                           int close_on_exec_p ATTRIBUTE_UNUSED)
 {
+#if 0
   HANDLE h = (HANDLE) _get_osfhandle (fd);
   if (h == (HANDLE) -1)
     return -1;
@@ -2424,6 +2454,9 @@ __gnat_set_close_on_exec (int fd ATTRIBUTE_UNUSED,
     return ! SetHandleInformation (h, HANDLE_FLAG_INHERIT, 0);
   return ! SetHandleInformation (h, HANDLE_FLAG_INHERIT,
     HANDLE_FLAG_INHERIT);
+#else
+    return -1;
+#endif
 }
 
 /* Indicates if platforms supports automatic initialization through the
@@ -2477,6 +2510,7 @@ __gnat_kill (int pid, int sig, int close ATTRIBUTE_UNUSED)
 
 void __gnat_killprocesstree (int pid, int sig_num)
 {
+#if 0
   PROCESSENTRY32 pe;
 
   memset(&pe, 0, sizeof(PROCESSENTRY32));
@@ -2508,7 +2542,7 @@ void __gnat_killprocesstree (int pid, int sig_num)
     }
 
   CloseHandle (hSnap);
-
+#endif
   /* kill process */
 
   __gnat_kill (pid, sig_num, 1);

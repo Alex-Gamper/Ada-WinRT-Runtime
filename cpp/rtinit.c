@@ -217,10 +217,12 @@ __gnat_runtime_initialize(int install_handler)
 	 gnat_argv = (char **) xmalloc ((last) * sizeof (char *));
 
 	 /* argv[0] is the executable full path-name. */
-
+#if 0
 	 SearchPath (NULL, wargv[0], _T(".exe"), MAX_PATH, result, NULL);
 	 append_arg (&argc_expanded, NULL, result, &gnat_argv, &last, 0);
-
+#else
+     append_arg(&argc_expanded, NULL, wargv[0], &gnat_argv, &last, 0);
+#endif
 	 for (k=1; k<wargc; k++)
 	   {
 	     quoted = (wargv[k][0] == _T('\''));

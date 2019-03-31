@@ -42,86 +42,83 @@ extern "C" {
 #endif
 
 #include "env.h"
+#include <Windows.h>
 
 void
 __gnat_getenv (char *name, int *len, char **value)
 {
-  *value = getenv (name);
-  if (!*value)
-    *len = 0;
-  else
-    *len = strlen (*value);
-
-  return;
+    DWORD MaxSize = 2048;
+    *value = xmalloc(2048);
+    DWORD ActualSize = GetEnvironmentVariableA(name, *value, MaxSize);
+    *len = ActualSize;
+    return;
 }
-
-#include <Windows.h>
 
 void
 __gnat_setenv (char *name, char *value)
 {
-  size_t size = strlen (name) + strlen (value) + 2;
-  char *expression;
-
-  expression = (char *) xmalloc (size * sizeof (char));
-
-  //sprintf (expression, "%s=%s", name, value);
-  {
-	  LPCSTR	Source = "%1=%2";;
-	  DWORD_PTR	Arguments[] = { (DWORD_PTR) name , (DWORD_PTR) value };
-	  DWORD Ok = FormatMessageA(FORMAT_MESSAGE_ARGUMENT_ARRAY | FORMAT_MESSAGE_FROM_STRING, (LPCVOID)Source, 0, 0, (LPSTR) expression, size, (va_list* )Arguments);
-  }
-  _putenv (expression);
-  free (expression);
+    SetEnvironmentVariableA(name, value);
 }
-
-char*** __p__environ();
 
 char **
 __gnat_environ (void)
 {
-	return *__p__environ();
+    char** p_Environ = NULL;
+    char*  p_Env = GetEnvironmentStrings();
+
+    p_Environ = (char**)calloc(1, sizeof(void*));
+
+    int i = 0;
+    int j = 0;
+    int k = 1;
+
+    while (!((p_Env[i] == '\0') & (p_Env[i + 1] == '\0')))
+    {
+        if (p_Env[i] == '\0')
+        {
+            p_Environ = (char**)realloc(p_Environ, sizeof(void*) * (k + 1));
+            p_Environ[k - 1] = (char*)calloc(1, strlen(&p_Env[j]) + 1);
+            strncpy_s(p_Environ[k - 1], strlen(&p_Env[j]) + 1, &p_Env[j], strlen(&p_Env[j]));
+            j = i + 1;
+            ++k;
+        }
+        ++i;
+    }
+    p_Environ[k - 1] = NULL;
+
+    BOOL Ok = FreeEnvironmentStringsA(p_Env);
+    return p_Environ;
 }
 
 void __gnat_unsetenv (char *name)
 {
-  size_t size = strlen (name) + 2;
-  char *expression;
-  expression = (char *) xmalloc (size * sizeof (char));
-
-  //sprintf (expression, "%s=", name);
-  {
-	  LPCSTR	Source = "%1=";;
-	  DWORD_PTR	Arguments[] = { (DWORD_PTR) name };
-	  DWORD Ok = FormatMessageA(FORMAT_MESSAGE_ARGUMENT_ARRAY | FORMAT_MESSAGE_FROM_STRING, (LPCVOID)Source, 0, 0, (LPSTR)expression, size, (va_list*)Arguments);
-  }
-  _putenv (expression);
-  free (expression);
+    SetEnvironmentVariableA(name, NULL);
 }
 
 void __gnat_clearenv (void)
 {
-  /* On Windows, FreeBSD and MacOS there is no function to clean all the
-     environment but there is a "clean" way to unset a variable. So go
-     through the environ table and call __gnat_unsetenv on all entries */
-  char **env = __gnat_environ ();
-  size_t size;
+    char **env = __gnat_environ();
 
-  while (env[0] != NULL) {
-    size = 0;
-    while (env[0][size] != '=')
-      size++;
-    /* create a string that contains "name" */
-    size++;
+    if (env != NULL)
     {
-      char *expression;
-      expression = (char *) xmalloc (size * sizeof (char));
-      strncpy (expression, env[0], size);
-      expression[size - 1] = 0;
-      __gnat_unsetenv (expression);
-      free (expression);
+        for (int i = 1; *(env + i); ++i)
+        {
+            char* NameValue = *(env + i);
+
+            size_t size = 0;
+            while (NameValue[size] != '=')
+            {
+                ++size;
+            }
+            ++size; // cater for null terminator;
+            char *expression;
+            expression = (char *)malloc(size * sizeof(char));
+            strncpy_s(expression, size, NameValue, size-1);
+            expression[size - 1] = 0;
+            __gnat_unsetenv(expression);
+            free(expression);
+        }
     }
-  }
 }
 
 #ifdef __cplusplus

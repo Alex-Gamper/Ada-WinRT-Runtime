@@ -43,8 +43,8 @@
    Ada.Command_Line.Environment package.  */
 
 #include <sys/stat.h>
-
 #include "adaint.h"
+#include "env.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,17 +55,16 @@ const char **gnat_argv = (const char **) 0;
 const char **gnat_envp = (const char **) 0;
 
 #include <stdlib.h>
+#include "env.h"
 
-char*** __p__environ();
-
-#define gnat_envp (*__p__environ())
-
+//----------------------------------------------------------------------------//
 int
 __gnat_arg_count (void)
 {
   return gnat_argc;
 }
 
+//----------------------------------------------------------------------------//
 int
 __gnat_len_arg (int arg_num)
 {
@@ -75,6 +74,7 @@ __gnat_len_arg (int arg_num)
     return 0;
 }
 
+//----------------------------------------------------------------------------//
 void
 __gnat_fill_arg (char *a, int i)
 {
@@ -82,29 +82,40 @@ __gnat_fill_arg (char *a, int i)
     memcpy (a, gnat_argv[i], strlen (gnat_argv[i]));
 }
 
+//----------------------------------------------------------------------------//
 int
 __gnat_env_count (void)
 {
-  int i;
-  for (i = 0; gnat_envp[i]; i++)
-    ;
-  return i;
+    char **env = __gnat_environ();
+    int i;
+    for (i = 0; env[i]; i++)
+        ;
+    return i;
 }
 
+//----------------------------------------------------------------------------//
 int
 __gnat_len_env (int env_num)
 {
-  if (gnat_envp != NULL)
-    return strlen (gnat_envp[env_num]);
-  else
-    return 0;
+    char **env = __gnat_environ();
+    if (env != NULL)
+        return strlen (env[env_num]);
+    else
+        return 0;
 }
 
+//----------------------------------------------------------------------------//
 void
 __gnat_fill_env (char *a, int i)
 {
-  if (gnat_envp != NULL)
-    memcpy (a, gnat_envp[i], strlen (gnat_envp[i]));
+    char **env = __gnat_environ();
+    if (env != NULL)
+    {
+        if (env[i] != NULL)
+        {
+            memcpy(a, env[i], strlen(env[i]));
+        }
+    }
 }
 
 #ifdef __cplusplus

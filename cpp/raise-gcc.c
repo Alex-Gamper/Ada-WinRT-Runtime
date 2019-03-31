@@ -1307,10 +1307,8 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
                 if (RuntimeFunction)
                 {
                     //OutputDebugString("\tRtlVirtualUnwind() : calling\n");
-                    //WINRT_fprintf_s(stdout, "B - Original : %llx ImageBase : %llx Rip : %llx\n", ms_orig_context->Rip, ImageBase, context.Rip);
                         /* Unwind.  */
                     RtlVirtualUnwind (0, ImageBase, context.Rip, RuntimeFunction, &context, &HandlerData, &EstablisherFrame, NULL);
-                    //WINRT_fprintf_s(stdout, "A - Original : %llx ImageBase : %llx Rip : %llx RuntimeFunction : %llx \n", ms_orig_context->Rip, ImageBase, context.Rip, RuntimeFunction);
                 }
                 else
                 {
@@ -1327,18 +1325,6 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
                 }
             }
             
-            //WINRT_fprintf_s(stdout, "ControlPc          %llx\n", ms_disp->ControlPc);
-            //WINRT_fprintf_s(stdout, "ImageBase          %llx\n", ms_disp->ImageBase);
-            //WINRT_fprintf_s(stdout, "FunctionEntry      %llx\n", ms_disp->FunctionEntry);
-            //WINRT_fprintf_s(stdout, "EstablisherFrame   %llx\n", ms_disp->EstablisherFrame);
-            //WINRT_fprintf_s(stdout, "TargetIp           %llx\n", ms_disp->TargetIp);
-            //WINRT_fprintf_s(stdout, "ContextRecord.Rip  %llx\n", ms_disp->ContextRecord->Rip);
-            //WINRT_fprintf_s(stdout, "ContextRecord.Rsp  %llx\n", ms_disp->ContextRecord->Rsp);
-
-            //WINRT_fprintf_s(stdout, "mf_func            %llx\n", mf_func);
-            //WINRT_fprintf_s(stdout, "mf_imagebase       %llx\n", mf_imagebase);
-            //WINRT_fprintf_s(stdout, "mf_rsp             %llx\n", mf_rsp);
-
             /* If we have found the machine frame, adjust the return address.  */
             if (mf_func != NULL)
                 __gnat_adjust_context ((unsigned char *)(mf_imagebase + mf_func->UnwindData), mf_rsp);

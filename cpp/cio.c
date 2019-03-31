@@ -29,10 +29,9 @@
  *                                                                          *
  ****************************************************************************/
 
-#include <sys/stat.h>
 #include <stdio.h>
-#include "adaint.h"
-#include "Winrt.h"
+#include <stdlib.h>
+#include <Windows.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,19 +54,27 @@ void put_char_stderr(int c)
 
 int get_int (void)
 {
-  int x;
-  WINRT_fscanf_s (stdin, " %d", &x);
-  return x;
+    return _getw(stdin);
 }
 
 void put_int (int x)
 {
-    WINRT_fprintf_s(stdout, "%d", x);
+    char Buffer[32];
+    ZeroMemory(Buffer, _countof(Buffer));
+    if (_itoa_s(x, Buffer, _countof(Buffer), 10) == 0)
+    {
+        int RetVal = fputs(Buffer, stdout);
+    }
 }
 
 void put_int_stderr (int x)
 {
-    WINRT_fprintf_s(stderr, "%d", x);
+    char Buffer[32];
+    ZeroMemory(Buffer, _countof(Buffer));
+    if (_itoa_s(x, Buffer, _countof(Buffer), 10) == 0)
+    {
+        int RetVal = fputs(Buffer, stderr);
+    }
 }
 
 #ifdef __cplusplus

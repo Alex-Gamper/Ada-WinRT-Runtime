@@ -49,6 +49,7 @@ project Winrt_Runtime is
         for Prefix use Install_Prefix;
         for Required_Artifacts ("") use ("runtime.xml", "ada_source_path", "ada_object_path");
         for Required_Artifacts ("adalib") use ("./lib/libother.a");
+        for Required_Artifacts ("adalib") use ("./libgnarl/libgnarl.a");
         for Sources_Subdir use "adainclude";
         for Lib_Subdir use "adalib";
         for Install_Project use "false";

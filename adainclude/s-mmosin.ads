@@ -97,15 +97,23 @@ package System.Mmap.OS_Interface is
       PAGE_READWRITE        : constant := 16#0004#;
       INVALID_FILE_SIZE     : constant := 16#FFFFFFFF#;
 
-      function CreateFile
+      type CREATEFILE2_EXTENDED_PARAMETERS is record
+         dwSize : DWORD;
+         dwFileAttributes : DWORD;
+         dwFileFlags : DWORD;
+         dwSecurityQosFlags : DWORD;
+         lpSecurityAttributes : access SECURITY_ATTRIBUTES;
+         hTemplateFile : HANDLE;
+      end record;
+
+      function CreateFile2
         (lpFileName            : Standard.System.Address;
          dwDesiredAccess       : DWORD;
          dwShareMode           : DWORD;
-         lpSecurityAttributes  : access SECURITY_ATTRIBUTES;
          dwCreationDisposition : DWORD;
-         dwFlagsAndAttributes  : DWORD;
-         hTemplateFile         : HANDLE) return HANDLE;
-      pragma Import (Stdcall, CreateFile, "CreateFileFromAppW");
+         CreateExParams :  access CREATEFILE2_EXTENDED_PARAMETERS
+         ) return HANDLE;
+      pragma Import (Stdcall, CreateFile2, "CreateFile2");
 
       function WriteFile
         (hFile                  : HANDLE;

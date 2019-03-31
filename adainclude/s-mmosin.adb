@@ -50,51 +50,6 @@ package body System.Mmap.OS_Interface is
       Use_Mmap_If_Available : Boolean;
       Write                 : Boolean) return System_File;
 
-   function From_UTF8 (Path : String) return Wide_String;
-   --  Convert from UTF-8 to Wide_String
-
-   ---------------
-   -- From_UTF8 --
-   ---------------
-
-   function From_UTF8 (Path : String) return Wide_String is
-      function MultiByteToWideChar
-        (Codepage : Interfaces.C.unsigned;
-         Flags    : Interfaces.C.unsigned;
-         Mbstr    : Address;
-         Mb       : Natural;
-         Wcstr    : Address;
-         Wc       : Natural) return Integer;
-      pragma Import (Stdcall, MultiByteToWideChar, "MultiByteToWideChar");
-
-      Current_Codepage : Interfaces.C.unsigned;
-      pragma Import (C, Current_Codepage, "__gnat_current_codepage");
-
-      Len : Natural;
-   begin
-      --  Compute length of the result
-      Len := MultiByteToWideChar
-        (Current_Codepage, 0, Path'Address, Path'Length, Null_Address, 0);
-      if Len = 0 then
-         raise Constraint_Error;
-      end if;
-
-      declare
-         --  Declare result
-         Res : Wide_String (1 .. Len);
-      begin
-         --  And compute it
-         Len := MultiByteToWideChar
-           (Current_Codepage, 0,
-            Path'Address, Path'Length,
-            Res'Address, Len);
-         if Len = 0 then
-            raise Constraint_Error;
-         end if;
-         return Res;
-      end;
-   end From_UTF8;
-
    -----------------
    -- Open_Common --
    -----------------
@@ -107,13 +62,14 @@ package body System.Mmap.OS_Interface is
       dwDesiredAccess, dwShareMode : DWORD;
       PageFlags                    : DWORD;
 
-      W_Filename                   : constant Wide_String :=
-         From_UTF8 (Filename) & Wide_Character'Val (0);
+      A_Filename                   : constant String :=
+         Filename & Character'Val (0);
       File_Handle, Mapping_Handle  : HANDLE;
 
       SizeH                        : aliased SIZE_T;
       Size                         : File_Size;
       Ok                           : BOOL;
+      Parameters : aliased CREATEFILE2_EXTENDED_PARAMETERS;
    begin
       if Write then
          dwDesiredAccess := GENERIC_READ + GENERIC_WRITE;
@@ -125,11 +81,18 @@ package body System.Mmap.OS_Interface is
          PageFlags       := Win.PAGE_READONLY;
       end if;
 
+      Parameters.dwSize := 0;
+      Parameters.dwFileAttributes := Win.FILE_ATTRIBUTE_NORMAL;
+      Parameters.dwFileFlags := 0;
+      Parameters.dwSecurityQosFlags := 0;
+      Parameters.lpSecurityAttributes := null;
+      Parameters.hTemplateFile := 0;
+
       --  Actually open the file
 
-      File_Handle := CreateFile
-        (W_Filename'Address, dwDesiredAccess, dwShareMode,
-         null, OPEN_EXISTING, Win.FILE_ATTRIBUTE_NORMAL, 0);
+      File_Handle := CreateFile2
+        (A_Filename'Address, dwDesiredAccess, dwShareMode,
+         OPEN_EXISTING, Parameters'Access);
 
       if File_Handle = Win.INVALID_HANDLE_VALUE then
          return Invalid_System_File;

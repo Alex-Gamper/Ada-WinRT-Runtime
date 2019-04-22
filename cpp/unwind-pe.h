@@ -29,6 +29,8 @@
 #ifndef GCC_UNWIND_PE_H
 #define GCC_UNWIND_PE_H
 
+#include <stdlib.h>
+
 /* If using C++, references to abort have to be qualified with std::.  */
 #if __cplusplus
 #define __gxx_abort std::abort

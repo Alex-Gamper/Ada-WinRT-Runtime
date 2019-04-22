@@ -29,6 +29,8 @@
  *                                                                          *
  ****************************************************************************/
 
+#define MINGW_HAS_SECURE_API 1
+
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <time.h>

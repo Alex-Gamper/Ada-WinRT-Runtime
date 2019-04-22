@@ -28,6 +28,7 @@
  * Extensive contributions were provided by Ada Core Technologies Inc.      *
  *                                                                          *
  ****************************************************************************/
+#define MINGW_HAS_SECURE_API 1
 
 #include <stdio.h>
 #include <stdlib.h>

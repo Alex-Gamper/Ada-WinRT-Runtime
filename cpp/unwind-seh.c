@@ -30,13 +30,13 @@
 
 #define ATTRIBUTE_UNUSED __attribute__((unused))
 
-#if defined (__SEH__) && !defined (__USING_SJLJ_EXCEPTIONS__)
+#if 1 //defined (__SEH__) && !defined (__USING_SJLJ_EXCEPTIONS__)
 
 /* At the moment everything is written for x64, but in theory this could
    also be used for i386, arm, mips and other extant embedded Windows.  */
-#ifndef __x86_64__
-#error "Unsupported architecture."
-#endif
+//#ifndef __x86_64__
+//#error "Unsupported architecture."
+//#endif
 
 /* Define GCC's exception codes.  See
      http://msdn.microsoft.com/en-us/library/het71c37(v=VS.80).aspx

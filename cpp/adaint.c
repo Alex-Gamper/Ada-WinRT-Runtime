@@ -1333,6 +1333,7 @@ __gnat_check_OWNER_ACL (TCHAR *wname,
 			DWORD CheckAccessDesired,
 			GENERIC_MAPPING CheckGenericMapping)
 {
+#if 0
   DWORD dwAccessDesired, dwAccessAllowed;
   PRIVILEGE_SET PrivilegeSet;
   DWORD dwPrivSetSize = sizeof (PRIVILEGE_SET);
@@ -1394,6 +1395,8 @@ __gnat_check_OWNER_ACL (TCHAR *wname,
   if (hToken)
     CloseHandle (hToken);
   HeapFree (GetProcessHeap (), 0, pSD);
+#endif
+
   return 0;
 }
 
@@ -1402,6 +1405,7 @@ __gnat_set_OWNER_ACL (TCHAR *wname,
 		      ACCESS_MODE AccessMode,
 		      DWORD AccessPermissions)
 {
+#if 0
   PACL pOldDACL = NULL;
   PACL pNewDACL = NULL;
   PSECURITY_DESCRIPTOR pSD = NULL;
@@ -1442,6 +1446,7 @@ __gnat_set_OWNER_ACL (TCHAR *wname,
 
   LocalFree (pSD);
   LocalFree (pNewDACL);
+#endif
 }
 
 /* Check if it is possible to use ACL for wname, the file must not be on a

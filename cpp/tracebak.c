@@ -52,7 +52,7 @@ __gnat_backtrace (void **array,
 
     /* Get the context.  */
 #if 0
-    RtlCaptureContext (&context);
+	GetThreadContext(GetCurrentThread(), &context);
     /* Setup unwind history table (a cached to speed-up unwinding).  */
     memset(&history, 0, sizeof(history));
 

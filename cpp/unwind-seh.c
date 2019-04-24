@@ -365,7 +365,7 @@ _Unwind_Resume (struct _Unwind_Exception *gcc_exc)
   ms_exc.ExceptionInformation[3] = gcc_exc->private_[3];
 
   ms_context.ContextFlags = CONTEXT_ALL;
-  GetThreadContext (GetCurrentThread(), &ms_context);
+  RtlCaptureContext (&ms_context);
 
   RtlUnwindEx ((void *) gcc_exc->private_[1], (PVOID)gcc_exc->private_[2],
 	       &ms_exc, gcc_exc, &ms_context, &ms_history);
@@ -446,7 +446,7 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
   memset (&disp_context, 0, sizeof(disp_context));
 
   ms_context.ContextFlags = CONTEXT_ALL;
-  GetThreadContext(GetCurrentThread(), &ms_context);
+  RtlCaptureContext (&ms_context);
 
   gcc_context.disp = &disp_context;
   gcc_context.disp->ContextRecord = &ms_context;

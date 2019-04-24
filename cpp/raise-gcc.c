@@ -1284,7 +1284,6 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
             ULONG64 mf_rsp = 0;
 
             /* Get the current context.  */
-			//GetThreadContext(GetCurrentThread(), &context);
 			RtlCaptureContext (&context);
 
             while (1)

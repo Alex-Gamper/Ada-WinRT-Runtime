@@ -16,7 +16,7 @@ project Winrt_Runtime is
 
     type Build_Type is ("Production", "Debug");
 
-    Build : Build_Type := external ("BUILD", "Production");
+    Build : Build_Type := external ("BUILD", "Debug");
 
     package Builder is
         for Switches ("Ada") use ("--RTS=" & Project'Project_dir);
@@ -48,8 +48,7 @@ project Winrt_Runtime is
     package Install is
         for Prefix use Install_Prefix;
         for Required_Artifacts ("") use ("runtime.xml", "ada_source_path", "ada_object_path");
-        for Required_Artifacts ("adalib") use ("./lib/libother.a");
-        for Required_Artifacts ("adalib") use ("./libgnarl/libgnarl.a");
+        for Required_Artifacts ("adalib") use ("./lib/libother.a", "./libgnarl/libgnarl.a");
         for Sources_Subdir use "adainclude";
         for Lib_Subdir use "adalib";
         for Install_Project use "false";

@@ -1248,14 +1248,8 @@ __gnat_adjust_context (unsigned char *unw, ULONG64 rsp)
     }
 }
 
-//#include "Winrt.h"
-
-EXCEPTION_DISPOSITION
-__gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
-             PCONTEXT ms_orig_context,
-             PDISPATCHER_CONTEXT ms_disp)
+EXCEPTION_DISPOSITION __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame, PCONTEXT ms_orig_context, PDISPATCHER_CONTEXT ms_disp)
 {
-    //OutputDebugString("\n__gnat_personality_seh0() : started\n");
     /* Possibly transform run-time errors into Ada exceptions.  */
     if (!(ms_exc->ExceptionCode & STATUS_USER_DEFINED))
     {
@@ -1263,11 +1257,8 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
         const char *msg;
         ULONG64 excpip = (ULONG64) ms_exc->ExceptionAddress;
 
-        if (excpip != 0
-            && excpip >= (ms_disp->ImageBase + ms_disp->FunctionEntry->BeginAddress)
-            && excpip < (ms_disp->ImageBase + ms_disp->FunctionEntry->EndAddress))
+        if (excpip != 0 && excpip >= (ms_disp->ImageBase + ms_disp->FunctionEntry->BeginAddress) && excpip < (ms_disp->ImageBase + ms_disp->FunctionEntry->EndAddress))
         {
-#if 1
             /* This is a fault in this function.  We need to adjust the return
                 address before raising the GCC exception.  In order to do that,
                 we need to locate the machine frame that has been pushed onto
@@ -1278,12 +1269,22 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
                 never actually executed but instead appears before the real entry
                 point of an interrupt routine and exists only to provide a place
                 to simulate the push of a machine frame.  */
-            CONTEXT context;
-            PRUNTIME_FUNCTION mf_func = NULL;
-            ULONG64 mf_imagebase;
-            ULONG64 mf_rsp = 0;
 
-            /* Get the current context.  */
+			PRUNTIME_FUNCTION mf_func = NULL;
+			ULONG64 mf_imagebase;
+			ULONG64 mf_rsp = 0;
+#if 0
+			void* Rip = NULL;
+			void* Rsp = NULL;
+			void* Rbp = NULL;
+
+			asm volatile ("1: lea 1b(%%rip), %0": "=a" (Rip) : : );
+			asm volatile ("movq %%rsp, %0": "=a" (Rsp) : : );
+			asm volatile ("movq %%rbp, %0": "=a" (Rbp) : : );
+
+#else
+            CONTEXT context;
+
 			RtlCaptureContext (&context);
 
             while (1)
@@ -1293,7 +1294,6 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
                 VOID *HandlerData = NULL;
                 ULONG64 EstablisherFrame = 0;
 
-                /* Get function metadata.  */
                 RuntimeFunction = RtlLookupFunctionEntry (context.Rip, &ImageBase, ms_disp->HistoryTable);
 
                 /* Stop once we reached the frame of this function.  */
@@ -1306,8 +1306,6 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
 
                 if (RuntimeFunction)
                 {
-                    //OutputDebugString("\tRtlVirtualUnwind() : calling\n");
-                        /* Unwind.  */
                     RtlVirtualUnwind (0, ImageBase, context.Rip, RuntimeFunction, &context, &HandlerData, &EstablisherFrame, NULL);
                 }
                 else
@@ -1325,39 +1323,15 @@ __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *this_frame,
                 }
             }
             
-            /* If we have found the machine frame, adjust the return address.  */
+#endif
+			/* If we have found the machine frame, adjust the return address.  */
             if (mf_func != NULL)
                 __gnat_adjust_context ((unsigned char *)(mf_imagebase + mf_func->UnwindData), mf_rsp);
-#else
-            PRUNTIME_FUNCTION RuntimeFunction = NULL;
-            ULONG64 ImageBase = 0;
-            PVOID RetVal = NULL;
-            
-            RetVal = RtlPcToFileHeader((PVOID)ms_orig_context->Rip, (PVOID*)&ImageBase);
-            if (RetVal != NULL)
-            {
-                RuntimeFunction = RtlLookupFunctionEntry(ms_orig_context->Rip, &ImageBase, ms_disp->HistoryTable);
-                if (RuntimeFunction != NULL)
-                {
-                    __gnat_adjust_context((unsigned char *)(ImageBase + RuntimeFunction->UnwindData), ms_orig_context->Rsp);
-                }
-            }
-
-            OutputDebugString("\tSkipped calling RtlVirtualUnwind()\n");
-#endif
         }
 
         exception = __gnat_map_SEH (ms_exc, &msg);
         if (exception != NULL)
         {
-            /* Directly convert the system exception into a GCC one.
-
-            This is really breaking the API, but is necessary for stack size
-            reasons: the normal way is to call Raise_From_Signal_Handler,
-            which builds the exception and calls _Unwind_RaiseException,
-            which unwinds the stack and will call this personality routine.
-            But the Windows unwinder needs about 2KB of stack.  */
-
             struct _Unwind_Exception *exc = __gnat_create_machine_occurrence_from_signal_handler (exception, msg);
             memset (exc->private_, 0, sizeof (exc->private_));
             ms_exc->ExceptionCode = STATUS_GCC_THROW;

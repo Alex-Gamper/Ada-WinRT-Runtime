@@ -28,7 +28,7 @@
  * Extensive contributions were provided by Ada Core Technologies Inc.      *
  *                                                                          *
  ****************************************************************************/
-#define MINGW_HAS_SECURE_API 1
+ define MINGW_HAS_SECURE_API 1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,20 +37,30 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-    
+
+//-------------------------------------------------------------------------//
+#undef stdin
+#undef stdout
+#undef stderr
+	FILE* __cdecl __acrt_iob_func(unsigned);
+#define stdin  (__acrt_iob_func(0))
+#define stdout (__acrt_iob_func(1))
+#define stderr (__acrt_iob_func(2))
+//-------------------------------------------------------------------------//
+
 int get_char (void)
 {
-  return fgetc (stdin);
+	return fgetc(stdin);
 }
 
 void put_char(int c)
 {
-    fputc(c, stdout);
+	fputc(c, stdout);
 }
 
 void put_char_stderr(int c)
 {
-    fputc(c, stderr);
+	fputc(c, stderr);
 }
 
 int get_int (void)

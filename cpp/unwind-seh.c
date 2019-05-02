@@ -365,10 +365,13 @@ _Unwind_Resume (struct _Unwind_Exception *gcc_exc)
   ms_exc.ExceptionInformation[3] = gcc_exc->private_[3];
 
   ms_context.ContextFlags = CONTEXT_ALL;
-  RtlCaptureContext (&ms_context);
 
-  RtlUnwindEx ((void *) gcc_exc->private_[1], (PVOID)gcc_exc->private_[2],
-	       &ms_exc, gcc_exc, &ms_context, &ms_history);
+#if 0
+  RtlCaptureContext (&ms_context);
+  RtlUnwindEx ((void *) gcc_exc->private_[1], (PVOID)gcc_exc->private_[2], &ms_exc, gcc_exc, &ms_context, &ms_history);
+#else
+  RtlUnwind((void *)gcc_exc->private_[1], (PVOID)gcc_exc->private_[2], &ms_exc, gcc_exc);
+#endif
 
   /* Is RtlUnwindEx declared noreturn?  */
   abort ();
@@ -442,9 +445,11 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
   DISPATCHER_CONTEXT disp_context;
 
   memset (&ms_history, 0, sizeof(ms_history));
+  memset (&ms_context, 0, sizeof(ms_context));
   memset (&gcc_context, 0, sizeof(gcc_context));
   memset (&disp_context, 0, sizeof(disp_context));
 
+#if 0
   ms_context.ContextFlags = CONTEXT_ALL;
   RtlCaptureContext (&ms_context);
 
@@ -476,5 +481,25 @@ _Unwind_Backtrace(_Unwind_Trace_Fn trace,
       if (ms_context.Rip == 0)
 	return _URC_END_OF_STACK;
     }
+#else
+
+	//gcc_context.disp = &disp_context;
+	//gcc_context.disp->ContextRecord = &ms_context;
+	//gcc_context.disp->HistoryTable = &ms_history;
+	//
+	//PVOID BackTrace[64];
+	//WORD Frames = RtlCaptureStackBackTrace(0, 63, BackTrace, NULL);
+	//for (int i = 0; i < Frames; ++i)
+	//{
+	//	gcc_context.disp->ControlPc = BackTrace[i];
+	//	gcc_context.disp->FunctionEntry = RtlLookupFunctionEntry(BackTrace[i], &gcc_context.disp->ImageBase, &ms_history);
+
+	//	if (trace(&gcc_context, trace_argument) != _URC_NO_REASON)
+	//	{
+	//		return _URC_FATAL_PHASE1_ERROR;
+	//	}
+	//}
+
+#endif
 }
 #endif /* __SEH__  && !defined (__USING_SJLJ_EXCEPTIONS__)  */

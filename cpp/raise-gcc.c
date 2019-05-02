@@ -1273,7 +1273,7 @@ EXCEPTION_DISPOSITION __gnat_personality_seh0 (PEXCEPTION_RECORD ms_exc, void *t
 			PRUNTIME_FUNCTION mf_func = NULL;
 			ULONG64 mf_imagebase;
 			ULONG64 mf_rsp = 0;
-#if 0
+#if 1
 			void* Rip = NULL;
 			void* Rsp = NULL;
 			void* Rbp = NULL;

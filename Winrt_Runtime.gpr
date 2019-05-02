@@ -1,7 +1,7 @@
 project Winrt_Runtime is
 
     Base_Source_Dir       := Project'Project_Dir;
-    Base_Installation_Dir := "lib\gcc\x86_64-w64-mingw32\8.3.0/";
+    Base_Installation_Dir := "lib\gcc\x86_64-pc-mingw32\7.3.1/";
     Default_Prefix        := Base_Installation_Dir & "rts-Winrt_Runtime";
     Install_Prefix        := external ("PREFIX", Default_Prefix);
 
@@ -23,7 +23,7 @@ project Winrt_Runtime is
     end Builder;
 
     package Compiler is
-        CFLAGS := ("-g");
+        CFLAGS := ("");
         
         case Build is
             when "Production" =>
@@ -35,7 +35,7 @@ project Winrt_Runtime is
         ALL_CFLAGS := ("-fexceptions") & CFLAGS;
         for Switches ("C") use ALL_CFLAGS;
 
-        ALL_ADAFLAGS := ("-gnatpg", "-nostdinc") & CFLAGS;
+        ALL_ADAFLAGS := ("-g", "-gnatpg", "-nostdinc") & CFLAGS;
         for Switches ("Ada") use ALL_ADAFLAGS;
     end Compiler;
 

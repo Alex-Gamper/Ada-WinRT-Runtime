@@ -1042,13 +1042,13 @@ dirent_mbstowcs_s(
     DWORD flags;
 
     /* Determine code page for multi-byte string */
-    if (AreFileApisANSI ()) {
+    //if (AreFileApisANSI ()) {
         /* Default ANSI code page */
         cp = GetACP ();
-    } else {
-        /* Default OEM code page */
-        cp = GetOEMCP ();
-    }
+    //} else {
+    //    /* Default OEM code page */
+    //    cp = GetOEMCP ();
+    //}
 
     /*
      * Determine flags based on the character set.  For more information,
@@ -1133,13 +1133,13 @@ dirent_wcstombs_s(
     LPBOOL pflag;
 
     /* Determine code page for multi-byte string */
-    if (AreFileApisANSI ()) {
+    //if (AreFileApisANSI ()) {
         /* Default ANSI code page */
         cp = GetACP ();
-    } else {
-        /* Default OEM code page */
-        cp = GetOEMCP ();
-    }
+    //} else {
+    //    /* Default OEM code page */
+    //    cp = GetOEMCP ();
+    //}
 
     /* Compute the length of input string without zero-terminator */
     len = 0;

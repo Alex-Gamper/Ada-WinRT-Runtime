@@ -9,7 +9,7 @@ be removed, so please check back on the status periodically, thanks)
 
 ### Project Status
 
-Project has been released and considered stable.
+Project has been released and considered usable. 
 
 ### Configuration Instructions
 

@@ -9,7 +9,20 @@ be removed, so please check back on the status periodically, thanks)
 
 ### Project Status
 
-tba (work in progress)
+Project has been released and considered stable.
+
+### Configuration Instructions
+
+The Winrt_Runtime.gpr need to know where to install the project files/artifacts, this is specified by the
+variable named Base_Installation_Dir within the gpr file. You will need to change this value to suit your
+environment.
+
+For example
+
+* MSYS2 (gcc version 8.3) - Base_Installation_Dir := "lib\gcc\x86_64-w64-mingw32\8.3.1/";
+* MSYS2 (gcc version 9.1) - Base_Installation_Dir := "lib\gcc\x86_64-w64-mingw32\9.1.1/";
+* AdaCore CE 2018 (gcc version 7.3) - Base_Installation_Dir := "lib\gcc\x86_64-pc-mingw32\7.3.1/";
+* AdaCore CE 2019 (gcc version ?.?) - Base_Installation_Dir := "lib\gcc\x86_64-pc-mingw32\?.?.?/";
 
 ### Build instructions
 
@@ -20,6 +33,11 @@ simply run the following commands.
 * .\gprinstall -f -p -P Winrt_runtime.gpr
 
 ### Notes
+
+If you have previously built this runtime for a different target/version. Then please clean your previous env
+by executing the following command
+
+* .\gprclean Winnrt_runtime.gpr
 
 ### Feedback
 

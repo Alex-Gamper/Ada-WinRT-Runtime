@@ -11,9 +11,19 @@ be removed, so please check back on the status periodically, thanks)
 
 Project has been released and considered usable. 
 
+### Prerequisites
+
+You will need a working gcc/gnat **x64** Windows build environment. This release has **NOT** yet been
+tested against 32 bit environments. You may need to build gcc/gnat **x64** from source if required.
+Details/scripts on how to do this can be found on the mingw64 website, alternatively install using MSYS2
+
+### Project Dependencies
+
+None
+
 ### Configuration Instructions
 
-The Winrt_Runtime.gpr need to know where to install the project files/artifacts, this is specified by the
+The Winrt_Runtime.gpr needs to know where to install the project files/artifacts, this is specified by the
 variable named Base_Installation_Dir within the gpr file. You will need to change this value to suit your
 environment.
 
@@ -39,7 +49,7 @@ Alternatively, their is a build.cmd script as part of the distribution that runs
 If you have previously built this runtime for a different target/version. Then please clean your previous env
 by executing the following command
 
-* .\gprclean Winnrt_runtime.gpr
+* .\gprclean -P Winnrt_runtime.gpr
 
 ### Feedback
 

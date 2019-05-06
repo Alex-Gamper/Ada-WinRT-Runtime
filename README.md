@@ -32,6 +32,8 @@ simply run the following commands.
 * .\gprbuild -p -P Winrt_runtime.gpr
 * .\gprinstall -f -p -P Winrt_runtime.gpr
 
+Alternatively, their is a build.cmd script as part of the distribution that runs the above two commands.
+
 ### Notes
 
 If you have previously built this runtime for a different target/version. Then please clean your previous env

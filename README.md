@@ -9,7 +9,30 @@ be removed, so please check back on the status periodically, thanks)
 
 ### Project Status
 
-tba (work in progress)
+Project has been released and considered usable. 
+
+### Prerequisites
+
+You will need a working gcc/gnat **x64** Windows build environment. This release has **NOT** yet been
+tested against 32 bit environments. You may need to build gcc/gnat **x64** from source if required.
+Details/scripts on how to do this can be found on the mingw64 website, alternatively install using MSYS2
+
+### Project Dependencies
+
+None
+
+### Configuration Instructions
+
+The Winrt_Runtime.gpr needs to know where to install the project files/artifacts, this is specified by the
+variable named Base_Installation_Dir within the gpr file. You will need to change this value to suit your
+environment.
+
+For example
+
+* MSYS2 (gcc version 8.3) - Base_Installation_Dir := "lib\gcc\x86_64-w64-mingw32\8.3.1/";
+* MSYS2 (gcc version 9.1) - Base_Installation_Dir := "lib\gcc\x86_64-w64-mingw32\9.1.1/";
+* AdaCore CE 2018 (gcc version 7.3) - Base_Installation_Dir := "lib\gcc\x86_64-pc-mingw32\7.3.1/";
+* AdaCore CE 2019 (gcc version ?.?) - Base_Installation_Dir := "lib\gcc\x86_64-pc-mingw32\?.?.?/";
 
 ### Build instructions
 
@@ -19,7 +42,14 @@ simply run the following commands.
 * .\gprbuild -p -P Winrt_runtime.gpr
 * .\gprinstall -f -p -P Winrt_runtime.gpr
 
+Alternatively, their is a build.cmd script as part of the distribution that runs the above two commands.
+
 ### Notes
+
+If you have previously built this runtime for a different target/version. Then please clean your previous env
+by executing the following command
+
+* .\gprclean -P Winnrt_runtime.gpr
 
 ### Feedback
 

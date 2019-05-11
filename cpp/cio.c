@@ -39,6 +39,8 @@ extern "C" {
 #endif
 
 //-------------------------------------------------------------------------//
+// If building for Gnat Community edition 2018 (GCC 7.3) enable the below  //
+#if 0 
 #undef stdin
 #undef stdout
 #undef stderr
@@ -46,6 +48,7 @@ extern "C" {
 #define stdin  (__acrt_iob_func(0))
 #define stdout (__acrt_iob_func(1))
 #define stderr (__acrt_iob_func(2))
+#endif
 //-------------------------------------------------------------------------//
 
 int get_char (void)

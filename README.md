@@ -36,13 +36,18 @@ For example
 
 ### Build instructions
 
-From a command prompt that has your gcc/gnat x64 distribution/build environments bin directory in its path,
-simply run the following commands.
+From a Visual Studio command prompt that has your gcc/gnat x64 distribution/build environments bin directory in its path,
+simply run the following command. Note that the Visual Studio command prompt is needed for the Link command.
+
+* .\Build.cmd
+
+Alternatively, run the folloing commands from a visual studio command prompt
 
 * .\gprbuild -p -P Winrt_runtime.gpr
+* link /lib /machine:x64 /nodefaultlib /out:.\lib\libother.a .\lib\*.o
+* link /lib /machine:x64 /nodefaultlib /out:.\libgnarl\libgnarl.a .\libgnarl\*.o
 * .\gprinstall -f -p -P Winrt_runtime.gpr
 
-Alternatively, their is a build.cmd script as part of the distribution that runs the above two commands.
 
 ### Notes
 

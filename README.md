@@ -44,8 +44,8 @@ simply run the following command. Note that the Visual Studio command prompt is 
 Alternatively, run the folloing commands from a visual studio command prompt
 
 * .\gprbuild -p -P Winrt_runtime.gpr
-* link /lib /machine:x64 /nodefaultlib /out:.\lib\libother.a .\lib\*.o
-* link /lib /machine:x64 /nodefaultlib /out:.\libgnarl\libgnarl.a .\libgnarl\*.o
+* link /lib /machine:x64 /nodefaultlib /out:.\lib\libother.a .\lib\\*.o
+* link /lib /machine:x64 /nodefaultlib /out:.\libgnarl\libgnarl.a .\libgnarl\\*.o
 * .\gprinstall -f -p -P Winrt_runtime.gpr
 
 
